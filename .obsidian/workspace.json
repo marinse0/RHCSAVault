@@ -55,12 +55,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "RH OCP/3. Deploy Managed and Networked Applications on Kubernetes.md",
+                "file": "RH OCP/4. Manage Storage for Application Configuration and Data.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "3. Deploy Managed and Networked Applications on Kubernetes"
+              "title": "4. Manage Storage for Application Configuration and Data"
             }
           }
         ],
@@ -121,7 +121,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 368.5
+    "width": 276.5
   },
   "right": {
     "id": "6594a8230e6fe93c",
@@ -183,13 +183,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "RH OCP/3. Deploy Managed and Networked Applications on Kubernetes.md",
+                "file": "RH OCP/4. Manage Storage for Application Configuration and Data.md",
                 "followCursor": false,
                 "showSearch": true,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of 3. Deploy Managed and Networked Applications on Kubernetes"
+              "title": "Outline of 4. Manage Storage for Application Configuration and Data"
             }
           }
         ],
@@ -211,14 +211,15 @@
   },
   "active": "dd223849fd5f461b",
   "lastOpenFiles": [
-    "RH OCP/2. Run Applications as Containers and Pods.md",
+    "RH OCP/OpenShift.md",
+    "RH OCP/4. Manage Storage for Application Configuration and Data.md",
     "RH OCP/3. Deploy Managed and Networked Applications on Kubernetes.md",
+    "RH OCP/2. Run Applications as Containers and Pods.md",
     "RH OCP/1. Kubernetes and OpenShift Command-line Interfaces and APIs.md",
     "RHEL9 Linux/Summary of DNF Commands.md",
     "RHEL9 Linux/RPM Software Packages.md",
     "RHEL9 Linux/Automount Network-Attached Storage.md",
     "RHEL9 Linux/Installation.md",
-    "RH OCP/OpenShift.md",
     "RHEL9 Linux/Regular Expressions.md",
     "RHEL9 Linux/Bash shell.md",
     "RH OCP",
@@ -237,7 +238,6 @@
     "RHEL9 Linux/Log Events to the System.md",
     "RHEL9 Linux/SELinux.md",
     "RHEL9 Linux/Synchronize Files Between Systems Securely.md",
-    "RHEL9 Linux/Basic storage.md",
     "RHEL9 Linux"
   ]
 }
