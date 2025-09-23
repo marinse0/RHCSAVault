@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "RH OCP/1. OpenShift Basics.md",
+                "file": "RH OCP/7.  Manage Application Updates.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "1. OpenShift Basics"
+              "title": "7.  Manage Application Updates"
             }
           }
         ]
@@ -140,13 +140,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "RH OCP/1. OpenShift Basics.md",
+                "file": "RH OCP/7.  Manage Application Updates.md",
                 "followCursor": false,
                 "showSearch": true,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of 1. OpenShift Basics"
+              "title": "Outline of 7.  Manage Application Updates"
             }
           }
         ],
@@ -169,13 +169,13 @@
   },
   "active": "3b83518c2a8dd06f",
   "lastOpenFiles": [
+    "RH OCP/6. Configure Applications for Reliability.md",
+    "RH OCP/7.  Manage Application Updates.md",
+    "RH OCP/1. OpenShift Basics.md",
     "RH OCP/2. Kubernetes and OpenShift Command-line Interfaces and APIs.md",
     "RH OCP/3. Run Applications as Containers and Pods.md",
     "RH OCP/4. Deploy Managed and Networked Applications on Kubernetes.md",
     "RH OCP/5. Manage Storage for Application Configuration and Data.md",
-    "RH OCP/6. Configure Applications for Reliability.md",
-    "RH OCP/7.  Manage Application Updates.md",
-    "RH OCP/1. OpenShift Basics.md",
     "RHEL9 Linux/Summary of DNF Commands.md",
     "RHEL9 Linux/RPM Software Packages.md",
     "RHEL9 Linux/Automount Network-Attached Storage.md",
