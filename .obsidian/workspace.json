@@ -8,35 +8,20 @@
         "type": "tabs",
         "children": [
           {
-            "id": "3b83518c2a8dd06f",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "RH OCP/5. Configure Applications for Reliability.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "5. Configure Applications for Reliability"
-            }
-          },
-          {
             "id": "f759d73c1f01cd9d",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "RH OCP/3. Run Applications as Containers and Pods.md",
+                "file": "RH OCP/OpenShift Administration I - Operating a Production Cluster.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "3. Run Applications as Containers and Pods"
+              "title": "OpenShift Administration I - Operating a Production Cluster"
             }
           }
-        ],
-        "currentTab": 1
+        ]
       }
     ],
     "direction": "vertical"
@@ -155,13 +140,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "RH OCP/3. Run Applications as Containers and Pods.md",
+                "file": "RH OCP/OpenShift Administration I - Operating a Production Cluster.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of 3. Run Applications as Containers and Pods"
+              "title": "Outline of OpenShift Administration I - Operating a Production Cluster"
             }
           }
         ],
@@ -184,14 +169,15 @@
   },
   "active": "f759d73c1f01cd9d",
   "lastOpenFiles": [
-    "RH OCP/2. Kubernetes and OpenShift Command-line Interfaces and APIs.md",
-    "RH OCP/1. OpenShift Basics.md",
-    "RH OCP/OpenShift Administration II - Configuring a Production Cluster.md",
     "RH OCP/7.  Manage Application Updates.md",
+    "RH OCP/OpenShift Administration I - Operating a Production Cluster.md",
     "RH OCP/6. Configure Applications for Reliability.md",
     "RH OCP/5. Manage Storage for Application Configuration and Data.md",
     "RH OCP/4. Deploy Managed and Networked Applications on Kubernetes.md",
     "RH OCP/3. Run Applications as Containers and Pods.md",
+    "RH OCP/2. Kubernetes and OpenShift Command-line Interfaces and APIs.md",
+    "RH OCP/1. OpenShift Basics.md",
+    "RH OCP/OpenShift Administration II - Configuring a Production Cluster.md",
     "RH OCP/OpenShift.md",
     "RH OCP/6.  Manage Application Updates.md",
     "RH OCP/5. Configure Applications for Reliability.md",
@@ -210,7 +196,6 @@
     "RHEL9 Linux/Manage Files from the Command Line.md",
     "Study Notes.md",
     "RHEL9 Linux/Default Permissions and File Access.md",
-    "RHEL9 Linux/Linux Process States.md",
     "RHEL9 Linux"
   ]
 }
