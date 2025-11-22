@@ -445,11 +445,13 @@ The following example shows the directory structure of the `frontend-app` direct
 
 The following example shows a `kustomization.yaml` file in the `overlays/development` directory:
 
+```yaml
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 namespace: dev-env
 resources:
 - ../../base
+```
 
 The `frontend-app/overlay/development/kustomization.yaml` file uses the base kustomization file at `../../base` to create all the application resources in the `dev-env` namespace.
 
@@ -471,28 +473,30 @@ You can use JSON Patch and strategic merge patches. See the references section f
 
 The following is an example of a `kustomization.yaml` file in the `overlays/testing` directory:
 
+```yaml
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 namespace: test-env
-patches: ![1](https://rol.redhat.com/rol/static/roc/Common_Content/images/1.svg)
+patches:   # [1]
 - patch: |-
-    - op: replace ![2](https://rol.redhat.com/rol/static/roc/Common_Content/images/2.svg)
+    - op: replace  # [2]
       path: /metadata/name
       value: frontend-test
-  target: ![3](https://rol.redhat.com/rol/static/roc/Common_Content/images/3.svg)
+  target:  # [3]
     kind: Deployment
     name: frontend
-- patch: |- ![4](https://rol.redhat.com/rol/static/roc/Common_Content/images/4.svg)
+- patch: |-  # [4]
     - op: replace
       path: /spec/replicas
       value: 15
   target:
     kind: Deployment
     name: frontend
-resources: ![5](https://rol.redhat.com/rol/static/roc/Common_Content/images/5.svg)
+resources:  # [5]
 - ../../base
-commonLabels: ![6](https://rol.redhat.com/rol/static/roc/Common_Content/images/6.svg)
+commonLabels:  # [6]
   env: test
+```
 
 |   |   |
 |---|---|
@@ -506,21 +510,22 @@ commonLabels: ![6](https://rol.redhat.com/rol/static/roc/Common_Content/images/6
 The `patches` mechanism also provides an option to include patches from a separate YAML file by using the `path` key.
 
 The following example shows a `kustomization.yaml` file that uses a `patch.yaml` file:
-
+```yaml
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 namespace: prod-env
-patches: ![1](https://rol.redhat.com/rol/static/roc/Common_Content/images/1.svg)
-- path: patch.yaml ![2](https://rol.redhat.com/rol/static/roc/Common_Content/images/2.svg)
-  target: ![3](https://rol.redhat.com/rol/static/roc/Common_Content/images/3.svg)
+patches:  # [1]
+- path: patch.yaml  # [2]
+  target: # [3]
     kind: Deployment
     name: frontend
   options:
-    allowNameChange: true ![4](https://rol.redhat.com/rol/static/roc/Common_Content/images/4.svg)
-resources: ![5](https://rol.redhat.com/rol/static/roc/Common_Content/images/5.svg)
+    allowNameChange: true # [4]
+resources:  # [5]
 - ../../base
-commonLabels: ![6](https://rol.redhat.com/rol/static/roc/Common_Content/images/6.svg)
+commonLabels:  # [6]
   env: prod
+```
 
 |   |   |
 |---|---|
@@ -533,12 +538,14 @@ commonLabels: ![6](https://rol.redhat.com/rol/static/roc/Common_Content/images/6
 
 The `patch.yaml` file has the following content:
 
+```yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: frontend-prod ![1](https://rol.redhat.com/rol/static/roc/Common_Content/images/1.svg)
 spec:
   replicas: 5 ![2](https://rol.redhat.com/rol/static/roc/Common_Content/images/2.svg)
+```
 
 |   |   |
 |---|---|
@@ -549,38 +556,44 @@ spec:
 
 Run the ``kubectl kustomize _`kustomization-directory`_`` command to render the manifests without applying them to the cluster.
 
-[user@host frontend-app]$ **`kubectl kustomize overlay/production`**
-_...output omitted..._
+```sh
+[user@host frontend-app]$ kubectl kustomize overlay/production
+...output omitted...
 kind: Deployment
 metadata:
   labels:
     app: frontend
     `env: prod`
   name: `frontend-prod`
-_...output omitted..._
+...output omitted...
 spec:
   `replicas: 5`
   selector:
     matchLabels:
       app: frontend
       `env: prod`
-_...output omitted..._
+...output omitted...
+```
 
 The `kubectl apply` command applies configurations to the resources in the cluster. If resources are not available, then the `kubectl apply` command creates resources. The `kubectl apply` command applies a kustomization with the `-k` flag.
 
-[user@host frontend-app]$ **`kubectl apply -k overlay/production`**
+```sh
+[user@host frontend-app]$ kubectl apply -k overlay/production
 deployment.apps/frontend-prod created
-_...output omitted..._
+...output omitted...
+```
 
 ### Delete Resources by Using Kustomize
 
 Run the ``oc delete -k _`kustomization-directory`_`` command to delete the resources that were deployed by using Kustomize.
 
-[user@host frontend-app]$ **`oc delete -k overlay/production`**
+```yaml
+[user@host frontend-app]$ oc delete -k overlay/production
 configmap "database" deleted
 secret "database" deleted
 service "database" deleted
 deployment.apps "database" deleted
+```
 
 ### Kustomize Generators
 
@@ -596,6 +609,7 @@ The following example adds a configuration map by using the `configMapGenerator`
 
 The `kustomization.yaml` file has the following content:
 
+```yaml
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 namespace: hello-stage
@@ -606,9 +620,11 @@ configMapGenerator:
   literals:
     - msg="Welcome!"
     - enable="true"
+```
 
 The `deployment.yaml` file has the following content:
 
+```yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -617,7 +633,7 @@ metadata:
     app: hello
     name: hello
 spec:
-_...output omitted..._
+...output omitted...
     spec:
       containers:
       - name: hello
@@ -633,17 +649,19 @@ _...output omitted..._
             configMapKeyRef:
               name: hello-app-configmap
               key: enable
+```
 
 You can view and deploy all resources and customizations that the kustomization YAML file defines, in the development directory.
 
-[user@host hello-app]$ **`kubectl kustomize overlays/staging`**
+```sh
+[user@host hello-app]$ kubectl kustomize overlays/staging
 apiVersion: v1
 data:
   enable: "true"
   msg: Welcome!
 kind: ConfigMap
 metadata:
-  name: `hello-app-configmap-9tcmf95d77`
+  name: hello-app-configmap-9tcmf95d77
   namespace: hello-stage
 ---
 apiVersion: apps/v1
@@ -655,7 +673,7 @@ metadata:
   name: hello
   namespace: hello-stage
 spec:
-_...output omitted..._
+...output omitted...
     spec:
       containers:
       - env:
@@ -669,24 +687,25 @@ _...output omitted..._
             configMapKeyRef:
               key: enable
               name: `hello-app-configmap-9tcmf95d77`
-_...output omitted..._
+...output omitted...
 
-[user@host hello-app]$ **`kubectl apply -k overlays/staging`**
+[user@host hello-app]$ kubectl apply -k overlays/staging
 `configmap/hello-app-configmap-9tcmf95d77 created`
 deployment.apps/hello created
 
-[user@host hello-app]$ **`oc get all`**
+[user@host hello-app]$ oc get all
 NAME                         READY   STATUS    RESTARTS   AGE
-`pod/hello-75dc9cfc87-jh62k`   1/1     Running   0          97s
+pod/hello-75dc9cfc87-jh62k   1/1     Running   0          97s
 
 NAME                    READY   UP-TO-DATE   AVAILABLE   AGE
 deployment.apps/hello   1/1     1            1           97s
 
 NAME                               DESIRED   CURRENT   READY   AGE
 replicaset.apps/hello-75dc9cfc87   1         1         1       97s
-
+```
 The `kubectl apply -k` command creates a `hello-app-configmap-9tcmf95d77` configuration map and a `hello` deployment. Update the `kustomization.yaml` file with the configuration map values.
 
+```yaml
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 namespace: hello-stage
@@ -696,15 +715,17 @@ configMapGenerator:
 - name: hello-app-configmap
   literals:
     - msg="Welcome Back!"
-    - enable="true"
+    - enable="true"`
+```
 
 Then, apply the overlay with the `kubectl apply` command.
 
-[user@host hello-app]$ **`kubectl apply -k overlays/staging`**
+```sh
+[user@host hello-app]$ kubectl apply -k overlays/staging
 configmap/hello-app-configmap-696dm8h728 created
 deployment.apps/hello configured
 
-[user@host hello-app]$ **`oc get all`**
+[user@host hello-app]$ oc get all
 NAME                        READY   STATUS    RESTARTS   AGE
 `pod/hello-55bc55ff9-hrszh`   1/1     Running   0          3s
 
@@ -714,6 +735,7 @@ deployment.apps/hello   1/1     1            1           5m5s
 NAME                               DESIRED   CURRENT   READY   AGE
 replicaset.apps/hello-55bc55ff9    1         1         1       3s
 replicaset.apps/hello-75dc9cfc87   0         0         0       5m5s
+```
 
 The `kubectl apply -k` command applies kustomization. Kustomize appends a new hash to the configuration map name, which creates a `hello-app-configmap-696dm8h728` configuration map. The new configuration map triggers the generation of a new `hello-55bc55ff9-hrszh` pod.
 
@@ -721,18 +743,20 @@ You can generate a configuration map by using the `files` key from the `.propert
 
 The following example shows a `kustomization.yaml` file with the `configMapGenerator` field.
 
-_...output omitted..._
-`configMapGenerator:`
-- name: `configmap-1`  ![1](https://rol.redhat.com/rol/static/roc/Common_Content/images/1.svg)
-  `files:`
+```yaml
+...output omitted...
+configMapGenerator:
+- name: configmap-1  # [1]
+  files:
     - application.properties
-- name: `configmap-2`  ![2](https://rol.redhat.com/rol/static/roc/Common_Content/images/2.svg)
-  `envs:`
+- name: configmap-2  #[2]
+  envs:
     - configmap-2.env
-- name: `configmap-3`  ![3](https://rol.redhat.com/rol/static/roc/Common_Content/images/3.svg)
-  `literals:`
+- name: configmap-3  # [3]
+  literals:
     - name="configmap-3"
     - description="literal key-value pair"
+```
 
 |   |   |
 |---|---|
@@ -752,7 +776,8 @@ Enable=True
 
 Run the `kubectl kustomize` command to view details of resources and customizations that the kustomization YAML file defines:
 
-[user@host base]$ **`kubectl kustomize .`**
+```sh
+[user@host base]$ kubectl kustomize .
 apiVersion: v1
 data:
   application.properties: |
@@ -760,7 +785,7 @@ data:
     Enable=True
 kind: ConfigMap
 metadata:
-  name: configmap-1-5g2mh569b5 ![1](https://rol.redhat.com/rol/static/roc/Common_Content/images/1.svg)
+  name: configmap-1-5g2mh569b5 # [1]
 ---
 apiVersion: v1
 data:
@@ -768,7 +793,7 @@ data:
   Greet: Welcome
 kind: ConfigMap
 metadata:
-  name: configmap-2-92m84tg9kt ![2](https://rol.redhat.com/rol/static/roc/Common_Content/images/2.svg)
+  name: configmap-2-92m84tg9kt  # [2]
 ---
 apiVersion: v1
 data:
@@ -776,15 +801,16 @@ data:
   name: configmap-3
 kind: ConfigMap
 metadata:
-  name: configmap-3-k7g7d5bffd ![3](https://rol.redhat.com/rol/static/roc/Common_Content/images/3.svg)
+  name: configmap-3-k7g7d5bffd  # [3]
 ---
 _...output omitted..._
+```
 
-|   |   |
-|---|---|
-|[![1](https://rol.redhat.com/rol/static/roc/Common_Content/images/1.svg)](https://rol.redhat.com/rol/app/#_configuration_map_generator-CO12-1)|The `configMapGenerator` field appends a hash to all ConfigMap resources. The `configmap-1-5g2mh569b5` configuration map is generated from the `application.properties` file, and the data field has a single key with the `application.properties` value.|
-|[![2](https://rol.redhat.com/rol/static/roc/Common_Content/images/2.svg)](https://rol.redhat.com/rol/app/#_configuration_map_generator-CO12-2)|The `configmap-2-92m84tg9kt` configuration map is generated from the `configmap-2.env` file, and the data field has separate keys for each listed variable in the `configmap-2.env` file.|
-|[![3](https://rol.redhat.com/rol/static/roc/Common_Content/images/3.svg)](https://rol.redhat.com/rol/app/#_configuration_map_generator-CO12-3)|The `configmap-3-k7g7d5bffd` configuration map is generated from a literal key-value pair.|
+|                                                                                                                                                |                                                                                                                                                                                                                                                            |
+| ---------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [![1](https://rol.redhat.com/rol/static/roc/Common_Content/images/1.svg)](https://rol.redhat.com/rol/app/#_configuration_map_generator-CO12-1) | The `configMapGenerator` field appends a hash to all ConfigMap resources. The `configmap-1-5g2mh569b5` configuration map is generated from the `application.properties` file, and the data field has a single key with the `application.properties` value. |
+| [![2](https://rol.redhat.com/rol/static/roc/Common_Content/images/2.svg)](https://rol.redhat.com/rol/app/#_configuration_map_generator-CO12-2) | The `configmap-2-92m84tg9kt` configuration map is generated from the `configmap-2.env` file, and the data field has separate keys for each listed variable in the `configmap-2.env` file.                                                                  |
+| [![3](https://rol.redhat.com/rol/static/roc/Common_Content/images/3.svg)](https://rol.redhat.com/rol/app/#_configuration_map_generator-CO12-3) | The `configmap-3-k7g7d5bffd` configuration map is generated from a literal key-value pair.                                                                                                                                                                 |
 
 #### Secret Generator
 
@@ -792,18 +818,20 @@ A secret resource has sensitive data such as a username and a password. You can 
 
 The following example shows a `kustomization.yaml` file with the `secretGenerator` field:
 
-_...output omitted..._
-`secretGenerator:`
-- name: `secret-1`  ![1](https://rol.redhat.com/rol/static/roc/Common_Content/images/1.svg)
-  `files:`
+```yaml
+...output omitted..._
+secretGenerator:
+- name: secret-1  # [1]
+  files:
     - password.txt
-- name: `secret-2`  ![2](https://rol.redhat.com/rol/static/roc/Common_Content/images/2.svg)
-  `envs:`
+- name: secret-2   # [2]
+  envs:
     - secret-mysql.env
-- name: `secret-3`  ![3](https://rol.redhat.com/rol/static/roc/Common_Content/images/3.svg)
-  `literals:`
+- name: secret-3  # [3]
+  literals:
     - MYSQL_DB=mysql
     - MYSQL_PASS=root
+```
 
 |   |   |
 |---|---|
@@ -825,22 +853,25 @@ You can also add labels and annotations to the generated resources by using the 
 
 The following example shows the use of the `generatorOptions` field.
 
-_...output omitted..._
-`configMapGenerator:`
-- name: `my-configmap`
-  `literals:`
+```yaml
+...output omitted...
+configMapGenerator:
+- name: my-configmap
+  literals:
     - name="configmap-3"
     - description="literal key-value pair"
-`generatorOptions:`
-  `disableNameSuffixHash: true`
+generatorOptions:
+  disableNameSuffixHash: true
   labels:
-    `type: generated-disabled-suffix`
+    type: generated-disabled-suffix
   annotations:
-    `note: generated-disabled-suffix`
+    note: generated-disabled-suffix
+```
 
 You can use the `kubectl kustomize` command to render the changes to verify their effect.
 
-[user@host base]$ **`kubectl kustomize .`**
+```sh
+[user@host base]$ kubectl kustomize .
 apiVersion: v1
 data:
   description: literal key-value pair
@@ -852,7 +883,7 @@ metadata:
   `labels:`
     type: generated-disabled-suffix
   `name: my-configmap`
-
+```
 The `my-configmap` configuration map is without a hash suffix, and has a label and annotations that are defined in the kustomization file.
 
 
@@ -876,19 +907,21 @@ You can also create templates from scratch, or copy and customize a template to 
 
 The templates that the Cluster Samples Operator provides are in the `openshift` namespace. Use the following `oc get` command to view a list of these templates:
 
-[user@host ~]$ **`oc get templates -n openshift`**
+```sh
+[user@host ~]$ oc get templates -n openshift
 NAME                      DESCRIPTION            PARAMETERS        OBJECTS
 cache-service             Red Hat Data Grid...    8 (1 blank)      4
 cakephp-mysql-example     An example CakePHP...  21 (4 blank)      8
 cakephp-mysql-persistent  An example CakePHP...  22 (4 blank)      9
-_...output omitted..._
+...output omitted...
+```
 
 To evaluate any template, use the ``oc describe template _`template-name`_ -n openshift`` command to view more details about the template, including the description, the labels that the template uses, the template parameters, and the resources that the template generates.
 
 The following example shows the details of the `cache-service` template:
 
-```yaml
-[user@host ~]$ **`oc describe template cache-service -n openshift`**
+```sh
+[user@host ~]$ oc describe template cache-service -n openshift
 Name: cache-service
 Namespace: openshift
 Created: 2 months ago
@@ -934,8 +967,8 @@ Objects:  # [6]
 
 In addition to using the `oc describe` command to view information about a template, the `oc process` command provides a `--parameters` option to view only the parameters that a template uses. For example, use the following command to view the parameters that the `cache-service` template uses:
 
-```yaml
-[user@host ~]$ **`oc process --parameters cache-service -n openshift`**
+```sh
+[user@host ~]$ oc process --parameters cache-service -n openshift
 NAME                   ...   GENERATOR    VALUE
 APPLICATION_NAME       ...                cache-service
 IMAGE                  ...                registry.redhat.io/jboss-datagrid-7/...
@@ -953,30 +986,30 @@ Use the `-f` option to view the parameters of a template that are defined in a f
 
 Use the ``oc get template _`template-name`_ -o yaml -n _`namespace`_`` command to view the manifest for the template. The following example retrieves the template manifest for the `cache-service` template:
 
-```yaml
-[user@host ~]$ **`oc get template cache-service -o yaml -n openshift`**
+```sh
+[user@host ~]$ oc get template cache-service -o yaml -n openshift
 apiVersion: template.openshift.io/v1
 kind: `Template`
 labels:
   template: cache-service
 metadata:
- _...output omitted..._
+ ...output omitted...
 - apiVersion: v1
   kind: `Secret`
   metadata:
- _...output omitted..._
+ ...output omitted...
 - apiVersion: v1
   kind: `Service`
   metadata:
- _...output omitted..._
+ ...output omitted...
 - apiVersion: v1
   kind: `Service`
   metadata:
- _...output omitted..._
+ ...output omitted...
 - apiVersion: apps/v1
   kind: `StatefulSet`
   metadata:
- _...output omitted..._
+ ...output omitted...
 `parameters`:
 - description: Specifies a name for the application.
   displayName: Application Name
@@ -985,7 +1018,7 @@ metadata:
   value: cache-service
 - description: Sets an image to bootstrap the service.
   name: IMAGE
- _...output omitted..._
+ ...output omitted...
 ```
 
 In the template manifest, examine how the template creates resources. The manifest is also a good resource for learning how to create your own templates.
@@ -994,7 +1027,9 @@ In the template manifest, examine how the template creates resources. The manife
 
 The `oc new-app` command has a `--template` option that can deploy the template resources directly from the `openshift` project. The following example deploys the resources that are defined in the `cache-service` template from the `openshift` project:
 
-[user@host ~]$ **`oc new-app --template=cache-service -p APPLICATION_USER=my-user`**
+```sh
+[user@host ~]$ oc new-app --template=cache-service -p APPLICATION_USER=my-user
+```
 
 Using the `oc new-app` command to deploy the template resources is convenient for development and testing. However, for production usage, consume templates in a manner that helps resource and configuration tracking. For example, the `oc new-app` command can only create new resources, not update existing resources.
 
@@ -1006,18 +1041,22 @@ Unprivileged users can read the templates in the `openshift` namespace by defaul
 #### Deploying Applications from Templates
 
 The `oc process` command uses parameter values to transform a template into a set of related Kubernetes resource manifests. For example, the following command creates a set of resource manifests for the `my-cache-service` template. When you use the `-o yaml` option, the resulting manifests are in the YAML format. The example writes the manifests to a `my-cache-service-manifest.yaml` file:
-
-[user@host ~]$ **`oc process my-cache-service \   -p APPLICATION_USER=user1 -o yaml > my-cache-service-manifest.yaml`**
-
+```sh
+[user@host ~]$ oc process my-cache-service \   -p APPLICATION_USER=user1 -o yaml > my-cache-service-manifest.yaml
+```
 The previous example uses the `-p` option to provide a parameter value to the only required parameter without a default value.
 
 Use the `-f` option with the `oc process` command to process a template that is defined in a file:
 
-[user@host ~]$ **`oc process -f my-cache-service.yaml \   -p APPLICATION_USER=user1 -o yaml > my-cache-service-manifest.yaml`**
+```sh
+[user@host ~]$ oc process -f my-cache-service.yaml \   -p APPLICATION_USER=user1 -o yaml > my-cache-service-manifest.yaml
+```
 
 Use the `-p` option with ``_`key`_=_`value`_`` pairs with the `oc process` command to use parameter values that override the default values. The following example passes three parameter values to the `my-cache-service` template, and overrides the default values of the specified parameters:
 
-[user@host ~]$ **`oc process my-cache-service -o yaml \   -p TOTAL_CONTAINER_MEM=1024 \   -p APPLICATION_USER='cache-user' \   -p APPLICATION_PASSWORD='my-secret-password' \   > my-cache-service-manifest.yaml`**
+```sh
+[user@host ~]$ oc process my-cache-service -o yaml \   -p TOTAL_CONTAINER_MEM=1024 \   -p APPLICATION_USER='cache-user' \   -p APPLICATION_PASSWORD='my-secret-password' \   > my-cache-service-manifest.yaml
+```
 
 Instead of specifying parameters on the command line, place the parameters in a file. This option cleans up the command line when many parameter values are required. Save the parameters file in a version control system to keep records of the parameters that are used in production deployments.
 
@@ -1029,11 +1068,15 @@ APPLICATION_PASSWORD='my-secret-password'
 
 The corresponding `oc process` command uses the `--param-file` option to pass the parameters as follows:
 
-[user@host ~]$ **`oc process my-cache-service -o yaml \   --param-file=my-cache-service-params.env > my-cache-service-manifest.yaml`**
+```sh
+[user@host ~]$ oc process my-cache-service -o yaml \   --param-file=my-cache-service-params.env > my-cache-service-manifest.yaml
+```
 
 Generating a manifest file is not required to use templates. Instead, pipe the output of the `oc process` command directly to the input for the `oc apply -f -` command. The `oc apply` command creates live resources on the Kubernetes cluster.
 
-[user@host ~]$ **`oc process my-cache-service \   --param-file=my-cache-service-params.env | oc apply -f -`**
+```sh
+[user@host ~]$ oc process my-cache-service \   --param-file=my-cache-service-params.env | oc apply -f -
+```
 
 Because templates are flexible, you can use the same template to create different resources by changing the input parameters.
 
@@ -1065,6 +1108,7 @@ To compare the results of applying a different parameters file to a template aga
          terminationMessagePolicy: File
          volumeMounts:
 ```
+
 In this case, the configuration change increases the memory usage of the application. The output shows that the second generation uses `2Gi` of memory instead of `1Gi`.
 
 After verifying that the changes are what you intend, you can pipe the output of the `oc process` to the `oc apply -f -` command.
@@ -1092,25 +1136,29 @@ After you have a YAML file for a template, use the `oc create -f` command to upl
 
 The following example uploads a customized template that is defined in the `my-cache-service.yaml` file to the current project:
 
-[user@host ~]$ **`oc create -f my-cache-service.yaml`**
+```sh
+[user@host ~]$ oc create -f my-cache-service.yaml
+```
 
 Use the ``-n _`namespace`_`` option to upload the template to a different project. The following example uploads the template that is defined in the `my-cache-service.yaml` file to the `shared-templates` project:
 
-[user@host ~]$ **`oc create -f my-cache-service.yaml -n shared-templates`**
+```sh
+[user@host ~]$ oc create -f my-cache-service.yaml -n shared-templates
+```
 
 Use the `oc get templates` command to view a list of available templates in the project:
 
-[user@host ~]$ **`oc get templates -n shared-templates`**
+```sh
+[user@host ~]$ oc get templates -n shared-templates
 NAME                      DESCRIPTION            PARAMETERS        OBJECTS
 my-cache-service          Red Hat Data Grid...    8 (1 blank)      4
-
+```
 
 ## Helm Charts
 
 ### Objectives
 
 - Deploy and update applications from resource manifests that are packaged as Helm charts.
-    
 
 ### Helm
 
@@ -1136,11 +1184,11 @@ sample/
 |   |── example.yaml
 └── values.yaml ![3](https://rol.redhat.com/rol/static/roc/Common_Content/images/3.svg)
 
-|   |   |
-|---|---|
-|[![1](https://rol.redhat.com/rol/static/roc/Common_Content/images/1.svg)](https://rol.redhat.com/rol/app/#_helm_charts-CO19-1)|The `Chart.yaml` file contains chart metadata, such as the name and version of the chart.|
-|[![2](https://rol.redhat.com/rol/static/roc/Common_Content/images/2.svg)](https://rol.redhat.com/rol/app/#_helm_charts-CO19-2)|The `templates` directory contains files that define application resources such as deployments.|
-|[![3](https://rol.redhat.com/rol/static/roc/Common_Content/images/3.svg)](https://rol.redhat.com/rol/app/#_helm_charts-CO19-3)|The `values.yaml` file contains default values for the chart.|
+|     |                                                                                                 |
+| --- | ----------------------------------------------------------------------------------------------- |
+| [1] | The `Chart.yaml` file contains chart metadata, such as the name and version of the chart.       |
+| [2] | The `templates` directory contains files that define application resources such as deployments. |
+| [3] | The `values.yaml` file contains default values for the chart.                                   |
 
 Helm charts can contain hooks that Helm executes at different points during installations and upgrades. Hooks can automate tasks for installations and upgrades. With hooks, Helm charts can manage more complex applications than purely manifest-based processes. Review the chart documentation to learn about the chart hooks and their implications.
 
@@ -1166,7 +1214,8 @@ You can use and refer to charts in various ways. For example, if your local file
 
 Use the `helm show` command to display information about a chart. The `show chart` subcommand displays general information, such as the maintainers, or the source URL.
 
-[user@host ~]$ **``helm show chart _`chart-reference`_``**
+```sh
+[user@host ~]$ helm show chart chart-reference
 apiVersion: v1
 description: A Helm chart for Kubernetes
 name: examplechart
@@ -1176,15 +1225,18 @@ maintainers:
   name: Developer
 sources:
 - https://git.example.com/examplechart
+```
 
 The `show values` subcommand displays the default values for the chart. The output is in YAML format and comes from the `values.yaml` file in the chart.
 
-[user@host ~]$ **``helm show values _`chart-reference`_``**
+```sh
+[user@host ~]$ helm show values chart-reference
 image:
   repository: "sample"
   tag: "1.8.10"
   pullPolicy: IfNotPresent
-_...output omitted..._
+...output omitted...
+```
 
 Chart resources use the values from the `values.yaml` file by default. You can override these default values. You can use the output of the `show values` command to discover customizable values.
 
@@ -1197,11 +1249,8 @@ Always refer to the documentation of the chart before installation to learn abou
 To install a chart, you must decide on the following parameters:
 
 - The deployment target namespace
-    
 - The values to override
-    
 - The release name
-    
 
 Helm charts can contain Kubernetes resources of any kind. These resources can be namespaced or non-namespaced. Like normal resource definitions, namespaced resources in charts can define or omit a namespace declaration.
 
@@ -1213,15 +1262,19 @@ You can define values by writing a YAML file that contains them. This file can f
 
 Consider the following output from the `helm show values` command for an example chart:
 
+```
 image:
   repository: "sample"
   tag: "1.8.10"
   pullPolicy: IfNotPresent
+```
 
 Create a `values.yaml` file without the `image` key if you do not want to override any image parameters. Omit the `pullPolicy` key to override the `tag` key but not the pull policy. For example, the following YAML file would override only the image tag:
 
+```
 image:
   tag: "1.8.10-patched"
+```
 
 Besides the YAML file, you can override specific values by using command-line arguments.
 
@@ -1233,8 +1286,9 @@ With the namespace, values, and release name, you can start the deployment proce
 
 You can use the `--dry-run` option to preview the effects of installing a chart.
 
-[user@host ~]$ **``helm install _`release-name`_ _`chart-reference`_  --dry-run \   --values values.yaml``**
-NAME: release-name ![1](https://rol.redhat.com/rol/static/roc/Common_Content/images/1.svg)
+```sh
+[user@host ~]$ helm install release-name chart-reference  --dry-run \   --values values.yaml
+NAME: release-name  # [1]
 LAST DEPLOYED: Tue May 30 13:14:57 2023
 NAMESPACE: current-namespace
 STATUS: pending-install
@@ -1243,26 +1297,26 @@ TEST SUITE: None
 HOOKS:
 MANIFEST:
 ---
-# Source: chart/templates/serviceaccount.yaml ![2](https://rol.redhat.com/rol/static/roc/Common_Content/images/2.svg)
+# Source: chart/templates/serviceaccount.yaml # [2]
 apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: my-release-sa
   labels:
-_...output omitted..._
+...output omitted...
 
-NOTES: ![3](https://rol.redhat.com/rol/static/roc/Common_Content/images/3.svg)
+NOTES: ![3]
 The application can be accessed via port 1234.
-_...output omitted..._
+...output omitted...
+```
 
-|   |   |
-|---|---|
-|[![1](https://rol.redhat.com/rol/static/roc/Common_Content/images/1.svg)](https://rol.redhat.com/rol/app/#_rendering_manifests_from_a_chart-CO20-1)|General information about the new release|
-|[![2](https://rol.redhat.com/rol/static/roc/Common_Content/images/2.svg)](https://rol.redhat.com/rol/app/#_rendering_manifests_from_a_chart-CO20-2)|A list of the resources that the `helm install` command would create|
-|[![3](https://rol.redhat.com/rol/static/roc/Common_Content/images/3.svg)](https://rol.redhat.com/rol/app/#_rendering_manifests_from_a_chart-CO20-3)|Additional information|
+|     |                                                                      |
+| --- | -------------------------------------------------------------------- |
+| [1] | General information about the new release                            |
+| [2] | A list of the resources that the `helm install` command would create |
+| [3] | Additional information                                               |
 
-### Note
-
+>Note
 You define values to use for the installation with the `--values values.yaml` option. In this file, you override the default values from the chart that are defined in the `values.yaml` file that the chart contains.
 
 Often, chart resource names include the release name. In the example output of the `helm install` command, the service account is a combination of the release name and the `-sa` text.
@@ -1279,9 +1333,11 @@ When the `helm install` command runs successfully, besides creating the resource
 
 Use the `helm list` command to inspect releases on a cluster.
 
-[user@host ~]$ **`helm list`**
+```sh
+[user@host ~]$ helm list
 NAME         NAMESPACE   REVISION  ...  STATUS     CHART            APP VERSION
 my-release   example     1         ...  deployed   example-4.12.1   1.8.10
+```
 
 Similarly to `kubectl` commands, many `helm` commands have the `--all-namespaces` and `--namespace` options. The `helm list` command without options lists releases in the current namespace. If you use the `--all-namespaces` option, then it lists releases in all namespaces. If you use the `--namespace` option, then it lists releases in a single namespace.
 
@@ -1305,15 +1361,19 @@ Helm keeps a log of release upgrades, to review changes and roll back to previou
 
 You can review this log by using the `helm history` command:
 
-[user@host ~]$ **``helm history _`release_name`_``**
+```
+[user@host ~]$ helm history release_name
 REVISION  UPDATED        STATUS      CHART        APP VERSION  DESCRIPTION
 1         Wed May 31...  superseded  chart-0.0.6  latest       Install complete
 2         Wed May 31...  deployed    chart-0.0.7  latest       Upgrade complete
+```
 
 You can use the `helm rollback` command to revert to an earlier revision:
 
-[user@host ~]$ **``helm rollback _`release_name`_ _`revision`_``**
+```sh
+[user@host ~]$ helm rollback release_name revision
 Rollback was a success! Happy Helming!
+```
 
 Rolling back can have greater implications than upgrading, because upgrades might not be reversible. If you keep a test environment with the same upgrades as a production environment, then you can test rollbacks before performing them in the production environment to find potential issues.
 
@@ -1323,26 +1383,29 @@ Charts can be distributed as files, archives, or container images, or by using c
 
 The `helm repo` command provides the following subcommands to work with chart repositories.
 
-|Subcommand|Description|
-|:--|:--|
-|``add _`NAME`_ _`REPOSITORY_URL`_``|Add a Helm chart repository.|
-|`list`|List Helm chart repositories.|
-|`update`|Update Helm chart repositories.|
-|``remove _`REPOSITORY1_NAME`_ _`REPOSITORY2_NAME`_ …​``|Remove Helm chart repositories.|
+| Subcommand                                              | Description                     |
+| :------------------------------------------------------ | :------------------------------ |
+| ``add _`NAME`_ _`REPOSITORY_URL`_``                     | Add a Helm chart repository.    |
+| `list`                                                  | List Helm chart repositories.   |
+| `update`                                                | Update Helm chart repositories. |
+| ``remove _`REPOSITORY1_NAME`_ _`REPOSITORY2_NAME`_ …​`` | Remove Helm chart repositories. |
 
 The following command adds a repository:
 
-[user@host ~]$ **`helm repo add \   openshift-helm-charts https://charts.openshift.io/`**
+```sh
+[user@host ~]$ helm repo add \   openshift-helm-charts https://charts.openshift.io/
 "openshift-helm-charts" has been added to your repositories
+```
 
 This command and other repository commands change only local configuration, and do not affect any cluster resources. The `helm repo add` command updates the `~/.config/helm/repositories.yaml` configuration file, which keeps the list of configured repositories.
 
 When repositories are configured, other commands can use the list of repositories to perform actions. For example, the `helm search repo` command lists all available charts in the configured repositories:
 
-[user@host ~]$ **`helm search repo`**
+```sh
+[user@host ~]$ helm search repo
 NAME          CHART VERSION    APP VERSION    DESCRIPTION
 repo/chart    0.0.7            latest         A sample chart
-_...output omitted..._
-
+...output omitted...
+```
 By default, the `helm search repo` command shows only the latest version of a chart. Use the `--versions` option to list all available versions. By default, the `install` and `upgrade` commands use the latest version of the chart in the repository. You can use the `--version` option to install specific versions.
 
