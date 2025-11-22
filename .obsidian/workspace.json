@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "RH OCP/OpenShift Administration I - Operating a Production Cluster.md",
+                "file": "RedHat OpenShift Administration/II - Configuring a Production Cluster.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "OpenShift Administration I - Operating a Production Cluster"
+              "title": "II - Configuring a Production Cluster"
             }
           }
         ]
@@ -140,13 +140,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "RH OCP/OpenShift Administration I - Operating a Production Cluster.md",
+                "file": "RedHat OpenShift Administration/II - Configuring a Production Cluster.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of OpenShift Administration I - Operating a Production Cluster"
+              "title": "Outline of II - Configuring a Production Cluster"
             }
           }
         ],
@@ -167,17 +167,17 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "f759d73c1f01cd9d",
+  "active": "b9e58b4842556dbf",
   "lastOpenFiles": [
+    "RedHat OpenShift Administration/I - Operating a Production Cluster.md",
     "RH OCP/7.  Manage Application Updates.md",
-    "RH OCP/OpenShift Administration I - Operating a Production Cluster.md",
     "RH OCP/6. Configure Applications for Reliability.md",
     "RH OCP/5. Manage Storage for Application Configuration and Data.md",
     "RH OCP/4. Deploy Managed and Networked Applications on Kubernetes.md",
     "RH OCP/3. Run Applications as Containers and Pods.md",
     "RH OCP/2. Kubernetes and OpenShift Command-line Interfaces and APIs.md",
     "RH OCP/1. OpenShift Basics.md",
-    "RH OCP/OpenShift Administration II - Configuring a Production Cluster.md",
+    "RedHat OpenShift Administration/II - Configuring a Production Cluster.md",
     "RH OCP/OpenShift.md",
     "RH OCP/6.  Manage Application Updates.md",
     "RH OCP/5. Configure Applications for Reliability.md",
@@ -191,7 +191,7 @@
     "RHEL9 Linux/Installation.md",
     "RHEL9 Linux/Regular Expressions.md",
     "RHEL9 Linux/Bash shell.md",
-    "RH OCP",
+    "RedHat OpenShift Administration",
     "RHEL9 Linux/Containers, Podman.md",
     "RHEL9 Linux/Manage Files from the Command Line.md",
     "Study Notes.md",
