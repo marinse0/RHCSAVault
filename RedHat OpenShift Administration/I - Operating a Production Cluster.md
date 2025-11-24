@@ -4669,6 +4669,7 @@ When an application is run in Kubernetes with a pre-existing image, the applicat
 With Kubernetes, you can use manifests in `JSON` and `YAML` formats to specify the intended configuration for each application. You can define the name of the application, labels, the image source, storage, environment variables, and more.
 
 The following snippet shows an example of a `YAML` manifest file of a deployment:
+
 ```yaml
 apiVersion: apps/v1 #1
 kind: Deployment #2
@@ -4738,11 +4739,8 @@ binaryData: #3
 Applications often require access to sensitive information. For example, a back-end web application requires access to database credentials to query a database. Kubernetes and OpenShift use secrets to hold sensitive information. For example, you can use secrets to store the following types of sensitive information:
 
 - Passwords
-    
 - Sensitive configuration files
-    
 - Credentials to an external resource, such as an SSH key or OAuth token
-    
 
 The following listing shows an example of a secret:
 
@@ -4781,26 +4779,16 @@ myP@55
 Kubernetes and OpenShift support the following types of secrets:
 
 - Opaque secrets: An opaque secret store key and value pairs that contain arbitrary values, and are not validated to conform to any convention for key names or values.
-    
 - Service account tokens: Store a token credential for applications that authenticate to the Kubernetes API.
-    
 - Basic authentication secrets: Store the needed credentials for basic authentication. The data parameter of the secret object must contain the user and the password keys that are encoded in the Base64 format.
-    
 - SSH keys: Store data that is used for SSH authentication.
-    
 - TLS certificates: Store a certificate and a key that are used for TLS.
-    
 - Docker configuration secrets: Store the credentials for accessing a container image registry.
-    
 
 When you store information in a specific secret resource type, Kubernetes validates that the data conforms to the type of secret.
 
----
-**Note
-
+>Note
 By default, configuration maps and secrets are not encrypted. To encrypt your secret data at rest, you must encrypt the Etcd database. When enabled, Etcd encrypts the following resources: secrets, configuration maps, routes, OAuth access tokens, and OAuth authorization tokens. Encrypting the Etcd database is outside the scope of the course.
-
----
 
 For more information, refer to the _Encrypting Etcd Data_ chapter in the Red Hat OpenShift Container Platform 4.14 _Security and Compliance_ documentation at [https://docs.redhat.com/en/documentation/openshift_container_platform/4.14/html-single/security_and_compliance/index#about-etcd_encrypting-etcd](https://docs.redhat.com/en/documentation/openshift_container_platform/4.14/html-single/security_and_compliance/index#about-etcd_encrypting-etcd)
 
@@ -4809,6 +4797,7 @@ For more information, refer to the _Encrypting Etcd Data_ chapter in the Red Ha
 If a pod requires access to sensitive information, then create a secret for the information before you deploy the pod. Both the `oc` and `kubectl` command-line tools provide the `create secret` command. Use one of the following commands to create a secret:
 
 - Create a generic secret that contains key-value pairs from literal values that are typed on the command line:
+
 ```sh
  [user@host ~]$ oc create secret generic secret_name \ --from-literal key1=secret1 \ --from-literal key2=secret2
 ```
@@ -4864,8 +4853,7 @@ You can use files on each key that you add by clicking Browse beside the Value f
 |---|
 |![](https://static.ole.redhat.com/rhls/courses/do180-4.14/images/storage/configs/assets/configmap-file.png)|
 
-**Note
-
+>Note
 Use a binary data key instead of a data key if the file uses the binary format, such as a PNG file.
 
 ### Using Configuration Maps and Secrets to Initialize Environment Variables
@@ -5040,8 +5028,7 @@ You can also use the `oc set env` command to set application environment variabl
 
 [user@host ~]$ **`oc set env deployment/demo \ --from secret/demo-secret --prefix MYSQL_`**
 
-**Note
-
+>Note
 You cannot assign configuration maps by using the web console.
 
 ### Updating Secrets and Configuration Maps
@@ -5079,7 +5066,6 @@ Similar to other Kubernetes resources, you can use the `delete` command to delet
 ### Objectives
 
 - Provide applications with persistent storage volumes for block and file-based data.
-    
 
 ### Kubernetes Persistent Storage
 
@@ -5822,12 +5808,10 @@ Volumes:
 _...output omitted..._
 ```
 
----
-**Note
 
+>Note
 You must configure application-level clustering for stateful set pods to have the same data.
 
----
 
 You can update the number of replicas of the stateful set by using the `scale` command:
 
