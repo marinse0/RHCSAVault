@@ -1,0 +1,211 @@
+## Using 'explain' learn about resources
+
+List all available resources (names, short names, api versions...)
+```bash
+[install@ssttocp99 ~]$ oc api-resources | head
+NAME                                  SHORTNAMES                                                                             APIVERSION                                     NAMESPACED   KIND
+bindings                                                                                                                     v1                                             true         Binding
+componentstatuses                     cs                                                                                     v1                                             false        ComponentStatus
+configmaps                            cm                                                                                     v1                                             true         ConfigMap
+endpoints                             ep                                                                                     v1                                             true         Endpoints
+events                                ev                                                                                     v1                                             true         Event
+limitranges                           limits                                                                                 v1                                             true         LimitRange
+namespaces                            ns                                                                                     v1                                             false        Namespace
+nodes                                 no                                                                                     v1                                             false        Node
+persistentvolumeclaims                pvc                                                                                    v1                                             true         PersistentVolumeClaim
+```
+
+Details about specific resource
+```bash
+oc explain localvolumes  # only top level
+oc explain localvolumes.spec.storageClassDevices # more specific
+```
+
+List all files as in yaml file
+```bash
+oc explain localvolumes --recursive
+```
+
+  
+## Resize elasticsearch PVC
+
+[Resize ElasticSearch PersistentVolumeClaim in RHOCP4 - Red Hat Customer Portal](https://access.redhat.com/solutions/6075191)
+
+Some command to check status
+```bash
+# Section 1 : Identify the Environment and capture initial data
+oc get deployment -l component=elasticsearch #  List down the `ElasticSearch deployment`
+oc get pod -l component=elasticsearch # List down the current running `ElasticSearch pods`.
+oc get pvc -n openshift-logging # Find out the `ElasticSearch pvc`.
+
+# Section 2 : Perform the actual Operation for ElasticSearch storage resize.
+oc edit clusterloggings.logging.openshift.io instance -n openshift-logging # Edit the `clusterlogging` and update the size of `ElasticSearch` storage.
+oc scale deployment elasticsearch-cdm-xcahid2f-1  --replicas=0 -n openshift-logging #  Scale down first `ElasticSearch deployment` instance:
+oc delete pvc elasticsearch-elasticsearch-cdm-xcahid2f-1  -n openshift-logging # Delete the corresponding first `PVC`.
+oc get pvc -n openshift-logging # Check if the volume is spawned and bound by the operator with the updated size
+oc scale deployment elasticsearch-cdm-xcahid2f-1  --replicas=1 -n openshift-logging # Scale up the `ElasticSearch` instance again:
+watch oc exec -c elasticsearch elasticsearch-cdm-xcahid2f-1-76bbd48d8c-xxxx -- es_util --query=_cat/health?v # Watch the progress of data resync, until "active_shards_percent" reaches 100% again and status ids green!!! use name of teh newly created pod
+# Repeat the steps from `2` to `7` again for `elasticsearch-deployment-2` and `elasticsearch-deployment-3`.
+for i in $(oc get po -l component=elasticsearch -o name); do oc exec -c elasticsearch $i -- es_util --query=_cat/health?v ;done # Verify that all `ElasticSearch pods` are running and in a healthy state.
+
+oc get cronjob
+```
+
+## Elasticsearch manage indexes
+Login
+```
+oc login --username=rmarinsek --server=https://api.bdigital-gbx.ocp.bpo.ssg:6443
+```
+
+Get pods
+```
+oc get pods
+```
+
+Check disk usage on specific pod
+```
+oc rsh -c elasticsearch elasticsearch-cdm-bnpfqeda-1-66d5794dbb-tlc8c
+```
+
+List, get indexes sizes
+```
+oc exec -c elasticsearch elasticsearch-cdm-bnpfqeda-1-66d5794dbb-tlc8c -- es_util --query=_cat/indices?h=i,creation.date,creation.date.string,store.size,pri.store.size | grep 11-27
+```
+
+Delete index
+```
+oc exec -c elasticsearch elasticsearch-cdm-ov096pjg-3-7dc4c547cb-vcxnc  -- es_util --query=app-bpb-json-001441,app-bpb-json-001444 -XDELETE
+```
+## Installing OC operators
+Work log  
+- create a YAML file with configuration of machineset, watch for labels and roles
+- created machineset `oc create -f GBX_PRD_new-infra-node.yaml`  
+- add taint `oc adm taint nodes my-node-name node-role.kubernetes.io/infra:NoSchedule`
+- check with `oc describe nodes bdigital-gbx-smjs7-infra-qhf7w`
+
+source: [Creating infrastructure machine sets | Machine management | OpenShift Container Platform 4.9](https://docs.openshift.com/container-platform/4.9/machine_management/creating-infrastructure-machinesets.html)  
+
+
+## Deploy Grafana operator
+
+GitHub
+[grafana-operator/deploy/examples/oauth at master · grafana-operator/grafana-operator · GitHub](https://github.com/grafana-operator/grafana-operator/tree/master/deploy/examples/oauth)
+
+Steps taken to install Grafana operator in OpenShift environment
+- request token and login
+- oc login token….
+- crate a namespace
+   `oc adm new-project grafana`
+
+- From inside of the git clone folder of      run the following:  
+kustomization
+    `oc create -f crds.yaml -f deployment.yaml -f rbac.yaml`
+   
+- Create a session ticket
+   `oc create -f session-secret.yaml -n grafana`
+
+- Create the additional [cluster role](https://github.com/grafana-operator/grafana-operator/blob/master/deploy/examples/oauth/cluster_role.yaml) and [binding](https://github.com/grafana-operator/grafana-operator/blob/master/deploy/examples/oauth/cluster_role_binding.yaml).
+    `oc create -n grafana -f cluster_role.yaml -f cluster_role_binding.yaml`
+
+- Create config map  
+    `oc create -n grafana -f ocp-injected-certs.yml`
+
+- Create Grafan:
+    `oc create -n grafana -f Grafana.yaml`
+
+Some troubleshooting commans  
+```
+oc describe grafana -n grafana
+oc get pv,pvc -n grafana pesisten volume
+````
+## Deploy new MachineSet
+source: [Creating a machine set on vSphere - Creating machine sets | Machine management | OpenShift Container Platform 4.9](https://docs.openshift.com/container-platform/4.9/machine_management/creating_machinesets/creating-machineset-vsphere.html#creating-machineset-vsphere)
+
+## Creating infrastructure machine sets
+[Creating infrastructure machine sets | Machine management | OpenShift Container Platform 4.9](https://docs.openshift.com/container-platform/4.9/machine_management/creating-infrastructure-machinesets.html)
+
+## Working with pods, nodes
+In order to replace a node with the new image, the following steps should be done in written order.
+1. Mark the node as unschedulable: 
+```bash
+oc get nodes # list nodes
+oc adm cordon <node1>
+```
+2. Evacuate the pods:
+```bash
+oc adm drain <node1> <node2> --ignore-daemonsets=true --force=true
+```
+After node is drained, it can be deleted, if it is part of MachineSet a new one will be deployed automaticlt
+3. Mark the node as schedulable when done.
+```bash
+oc adm uncordon <node1>
+```
+
+Some commands for pods:
+```bash
+oc get pods
+oc get pod -o wide 
+oc describe pod <pod> | grep -i control
+oc delete pod -n openshift-monitoring <pod> # -n define namespace of pod
+
+```
+## Delete particular machine/node
+To delete specific node/machine, you have to taint it correctly using command below
+```bash
+    oc annotate machine/<machine-name> -n openshift-machine-api machine.openshift.io/cluster-api-delete-machine="true"
+```
+
+once machine is anotated follow **cordon, drain*** procedures
+
+If it is machine in machineset, scale it appropriately after with:
+```bash
+oc describe machineset <machineset-name> # see current machineset config
+oc scale --replicas=<number-of-replicas> machineset/<machineset-name> -n openshift-machine-api
+```
+
+## Creating ConfiMap from CLI
+The `ConfigMap` object provides mechanisms to inject containers with configuration data while keeping containers agnostic of OpenShift Container Platform. A config map can be used to store fine-grained information like individual properties or coarse-grained information like entire configuration files or JSON blobs.
+**`ConfigMap` objects reside in a project.**
+They can only be referenced by pods in the same project.
+```bash
+oc create configmap <configmap_name> [options]
+```
+Create a config map by specifying a specific file:
+```bash
+oc create configmap game-config-2 \
+  --from-file=example-files/game.properties \
+  --from-file=example-files/ui.properties
+```
+Verify the results:
+```bash
+oc get configmaps game-config-2 -o yaml
+```
+
+## Elasticsearch troubleshoot disk flooding
+
+[Troubleshooting for Critical Alerts - Troubleshooting Logging | Logging | OpenShift Container Platform 4.13](https://docs.openshift.com/container-platform/4.13/logging/troubleshooting/cluster-logging-troubleshooting-for-critical-alerts.html#Elasticsearch-Cluster-Health-is-Red)
+
+## Certificate renew - clusteroperator
+
+[How to renew/rotate the certificate for cluster operator operator-lifecycle-manager-packageserver in RHOCP4 - Red Hat Customer Portal](https://access.redhat.com/solutions/6999798)
+
+
+```
+oc login --token=sha256~sDKady3GJjKwH7tHF-Z5U9kHp230Z1fcLEcIxPZxJFA --server=https://api.bdigital-dta.ocp.bpo.ssg:6443
+oc get -o yaml clusteroperator operator-lifecycle-manager-packageserver
+oc describe operator-lifecycle-manager-packageserver
+oc describe clusteroperator operator-lifecycle-manager-packageserver
+oc get pod -l 'app in (catalog-operator, olm-operator, packageserver, package-server-manager)' -n openshift-operator-lifecycle-manager
+oc project  openshift-kube-apiserver
+oc logs kube-apiserver-example.com -c kube-apiserver
+oc get clusterversion
+oc get co operator-lifecycle-manager-packageserver -o  yaml
+oc get pods -n openshift-operator-lifecycle-manager
+oc get apiservice v1.packages.operators.coreos.com
+oc get apiservice v1.packages.operators.coreos.com -o jsonpath='{.spec.caBundle}' | base64 -d | openssl x509 -noout -text
+oc delete secret catalog-operator-serving-cert olm-operator-serving-cert packageserver-service-cert -n openshift-operator-lifecycle-manager
+oc delete pod -l 'app in (catalog-operator, olm-operator, packageserver, package-server-manager)' -n openshift-operator-lifecycle-manager
+oc get pods -n openshift-operator-lifecycle-manager
+oc delete apiservice v1.packages.operators.coreos.com
+oc get apiservice v1.packages.operators.coreos.com -o jsonpath='{.spec.caBundle}' | base64 -d | openssl x509 -noout -text
+```
