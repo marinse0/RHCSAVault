@@ -155,13 +155,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "RedHat OpenShift Administration/RMA - Knowledge.md",
+                "file": "RHEL9 Linux/Containers, Podman.md",
                 "followCursor": false,
                 "showSearch": true,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of RMA - Knowledge"
+              "title": "Outline of Containers, Podman"
             }
           },
           {
@@ -175,7 +175,7 @@
             }
           }
         ],
-        "currentTab": 4
+        "currentTab": 3
       }
     ],
     "direction": "horizontal",
@@ -193,7 +193,7 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "925c2eeca586ba05",
+  "active": "6144c2f9e1f98e8f",
   "lastOpenFiles": [
     "RedHat OpenShift Administration/RMA - Knowledge.md",
     "RedHat OpenShift Administration/Red Hat OpenShift Data Foundation.md",
