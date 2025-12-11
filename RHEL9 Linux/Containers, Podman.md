@@ -379,7 +379,6 @@ Podman v4.0 supports two network back ends for containers, Netavark and CNI. Sta
 netavark
 
 ```
-#### Note
 
 The `container-tools` meta-package includes the `netavark` and `aardvark-dns` packages. If Podman was installed as a stand-alone package, or if the `container-tools` meta-package was installed later, then the result of the previous command might be `cni`. To change the network back end, set the following configuration in the `/usr/share/containers/containers.conf` file:
 ```bash
