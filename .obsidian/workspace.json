@@ -27,12 +27,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "RHEL9 Linux/Containers, Podman.md",
+                "file": "RedHat OpenShift Administration/RMA - Knowledge.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Containers, Podman"
+              "title": "RMA - Knowledge"
             }
           }
         ],
@@ -155,13 +155,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "RHEL9 Linux/Containers, Podman.md",
+                "file": "RedHat OpenShift Administration/RMA - Knowledge.md",
                 "followCursor": false,
                 "showSearch": true,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of Containers, Podman"
+              "title": "Outline of RMA - Knowledge"
             }
           },
           {
@@ -193,8 +193,9 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "6144c2f9e1f98e8f",
+  "active": "925c2eeca586ba05",
   "lastOpenFiles": [
+    "RHEL9 Linux/Containers, Podman.md",
     "RedHat OpenShift Administration/RMA - Knowledge.md",
     "RedHat OpenShift Administration/Red Hat OpenShift Data Foundation.md",
     "RedHat OpenShift Administration/II - Configuring a Production Cluster.md",
@@ -219,7 +220,6 @@
     "RHEL9 Linux/Regular Expressions.md",
     "RHEL9 Linux/Bash shell.md",
     "RH OCP",
-    "RHEL9 Linux/Containers, Podman.md",
     "RHEL9 Linux/Manage Files from the Command Line.md",
     "Study Notes.md",
     "RHEL9 Linux/Default Permissions and File Access.md",
