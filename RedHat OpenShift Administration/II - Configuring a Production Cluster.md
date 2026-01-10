@@ -1882,7 +1882,6 @@ Likewise, the following command adds the `user1` user to the `lead-developers` g
 ### Objectives
 
 - Allow and protect network connections to applications inside an OpenShift cluster.
-    
 
 ### Accessing Applications from External Networks
 
@@ -2025,6 +2024,7 @@ spec:
 
 - The following network policy allows traffic from any pods in namespaces with the `network=network-1` label into any pods and ports in the `network-2` namespace. This policy is less restrictive than the `network-1` policy, because it does not restrict traffic from any pods in the `network-1` namespace.
     
+```yaml
     kind: NetworkPolicy
     apiVersion: networking.k8s.io/v1
     metadata:
@@ -2037,10 +2037,9 @@ spec:
         - `namespaceSelector`:
             matchLabels:
               network: `network-1`
-    
+```
 
-### Note
-
+>Note
 Network policies are Kubernetes resources. As such, you can manage them with `oc` commands.
 
 #### Network Policies Between Projects
@@ -2050,7 +2049,8 @@ One benefit of using network policies is to manage security between projects (te
 The fields in the network policy that take a list of objects can either be combined in the same object or can be listed as multiple objects. If combined, the conditions are combined with a logical _AND_. If separated in a list, the conditions are combined with a logical _OR_. With the logic options, you can create specific policy rules. The following examples highlight the differences that the syntax can make:
 
 - This example combines the selectors into one rule, and thereby allows access only from pods with the `app=mobile` label in namespaces with the `network=dev` label. This sample shows a logical _AND_ statement.
-    
+
+```yaml
     _...output omitted..._
       ingress:
       - from:
@@ -2061,8 +2061,11 @@ The fields in the network policy that take a list of objects can either be combi
             matchLabels:
               `app: mobile`
     
+```
+
 - By changing the `podSelector` field in the previous example to be an item in the `from` list, any pods in namespaces with the `network=dev` label or any pods with the `app=mobile` label from any namespace can reach the pods that match the top-level `podSelector` field. This sample shows a logical _OR_ statement.
     
+```yaml
     _...output omitted..._
       ingress:
       - from:
@@ -2072,21 +2075,22 @@ The fields in the network policy that take a list of objects can either be combi
         `- podSelector:`
             matchLabels:
               app: `mobile`
-    
+```
 
 #### Deny-all Network Policies
 
 If a pod is matched by selectors in one or more network policies, then the pod accepts only connections that at least one of those network policies allows. By default, all the pods created in a non-stricted namespace allow all network traffic from any source, enabling traffic that is not expected until you apply a policy that restricts the traffic. A strict example is a policy to deny-all ingress traffic to pods in your project, including from other pods inside your project. An empty pod selector means that this policy applies to all pods in this project. The following policy blocks all traffic, because no ingress rules are defined. Traffic is blocked unless you also define an explicit policy that overrides this default behavior.
 
+```yaml
 kind: NetworkPolicy
 apiVersion: networking.k8s.io/v1
 metadata:
   name: default-deny
 spec:
   `podSelector: {}`
+```
 
-### Important
-
+> Important
 If a pod does not match any network policies, then OpenShift does not restrict traffic to that pod. When creating an environment to allow network traffic only explicitly, you must include a deny-all policy.
 
 #### Allowing Access from OpenShift Cluster Services
@@ -2094,12 +2098,11 @@ If a pod does not match any network policies, then OpenShift does not restrict t
 When you protect your pods by using network policies, OpenShift cluster services might need explicit policies to access pods. Several common scenarios require explicit policies, including the following ones:
 
 - The router pods that enable access from outside the cluster by using ingress or route resources
-    
 - The monitoring service, if your application exposes metrics endpoints
-    
 
 The following policies allow ingress from OpenShift monitoring and ingress pods:
 
+```
 ---
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
@@ -2124,7 +2127,7 @@ spec:
     - `namespaceSelector`:
         matchLabels:
           network.openshift.io/policy-group: `monitoring`
-
+```
 ### Important
 
 Network policies do not block traffic from pods that use host networking to pods in the same node.
