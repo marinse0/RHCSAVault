@@ -41,12 +41,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "RedHat OpenShift Administration/ODF office hours.md",
+                "file": "RedHat OpenShift Administration/RMA - Knowledge.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "ODF office hours"
+              "title": "RMA - Knowledge"
             }
           }
         ],
@@ -169,13 +169,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "RedHat OpenShift Administration/ODF office hours.md",
+                "file": "RedHat OpenShift Administration/RMA - Knowledge.md",
                 "followCursor": false,
                 "showSearch": true,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of ODF office hours"
+              "title": "Outline of RMA - Knowledge"
             }
           },
           {
@@ -207,10 +207,10 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "b9e58b4842556dbf",
+  "active": "bafb41277fc4fa56",
   "lastOpenFiles": [
-    "RedHat OpenShift Administration/RMA - Knowledge.md",
     "RedHat OpenShift Administration/ODF office hours.md",
+    "RedHat OpenShift Administration/RMA - Knowledge.md",
     "RedHat OpenShift Administration/II - Configuring a Production Cluster.md",
     "Study points for the exam.md",
     "RHEL9 Linux/Containers, Podman.md",
