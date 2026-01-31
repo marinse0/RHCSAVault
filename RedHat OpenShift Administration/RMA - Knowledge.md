@@ -1,3 +1,90 @@
+## affinity
+
+The following example is a `Pod` spec with a rule that requires the pod be placed on a node with a label whose key is `e2e-az-NorthSouth` and whose value is either `e2e-az-North` or `e2e-az-South`:
+
+**Example pod configuration file with a node affinity required rule**
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: with-node-affinity
+spec:
+  securityContext:
+    runAsNonRoot: true
+    seccompProfile:
+      type: RuntimeDefault
+  affinity:
+    nodeAffinity: 
+```
+
+ 1 
+
+```yaml
+
+      requiredDuringSchedulingIgnoredDuringExecution: 
+```
+
+ 2 
+
+```yaml
+
+        nodeSelectorTerms:
+        - matchExpressions:
+          - key: e2e-az-NorthSouth 
+```
+
+ 3 
+
+```yaml
+
+            operator: In 
+```
+
+ 4 
+
+```yaml
+
+            values:
+            - e2e-az-North 
+```
+
+ 5 
+
+```yaml
+
+            - e2e-az-South 
+```
+
+ 6 
+
+```yaml
+
+  containers:
+  - name: with-node-affinity
+    image: docker.io/ocpqe/hello-pod
+    securityContext:
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop: [ALL]
+# ...
+```
+[1](https://docs.redhat.com/en/documentation/openshift_container_platform/4.20/html/nodes/controlling-pod-placement-onto-nodes-scheduling#CO130-1)
+
+The stanza to configure node affinity.
+
+[2](https://docs.redhat.com/en/documentation/openshift_container_platform/4.20/html/nodes/controlling-pod-placement-onto-nodes-scheduling#CO130-2)
+
+Defines a required rule.
+
+[3](https://docs.redhat.com/en/documentation/openshift_container_platform/4.20/html/nodes/controlling-pod-placement-onto-nodes-scheduling#CO130-3)[5](https://docs.redhat.com/en/documentation/openshift_container_platform/4.20/html/nodes/controlling-pod-placement-onto-nodes-scheduling#CO130-5)[6](https://docs.redhat.com/en/documentation/openshift_container_platform/4.20/html/nodes/controlling-pod-placement-onto-nodes-scheduling#CO130-6)
+
+The key/value pair (label) that must be matched to apply the rule.
+
+[4](https://docs.redhat.com/en/documentation/openshift_container_platform/4.20/html/nodes/controlling-pod-placement-onto-nodes-scheduling#CO130-4)
+
+The operator represents the relationship between the label on the node and the set of values in the `matchExpression` parameters in the `Pod` spec. This value can be `In`, `NotIn`, `Exists`, or `DoesNotExist`, `Lt`, or `Gt`.
+
 ## Using 'explain' learn about resources
 
 List all available resources (names, short names, api versions...)
