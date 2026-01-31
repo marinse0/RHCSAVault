@@ -41,13 +41,13 @@ spec:
 
 There is no explicit _node anti-affinity_ concept, but using the `NotIn` or `DoesNotExist` operator replicates that behavior.
 
-<Note
+> Note
+ If you are using node affinity and node selectors in the same pod configuration, note the following:
+ -If you configure both `nodeSelector` and `nodeAffinity`, both conditions must be satisfied for the pod to be scheduled onto a -candidate node.
+  -If you specify multiple `nodeSelectorTerms` associated with `nodeAffinity` types, then the pod can be scheduled onto a node if one of the `nodeSelectorTerms` is satisfied.
+  -If you specify multiple `matchExpressions` associated with `nodeSelectorTerms`, then the pod can be scheduled onto a node only if all `matchExpressions` are satisfied.
 
-If you are using node affinity and node selectors in the same pod configuration, note the following:
 
-- If you configure both `nodeSelector` and `nodeAffinity`, both conditions must be satisfied for the pod to be scheduled onto a candidate node.
-- If you specify multiple `nodeSelectorTerms` associated with `nodeAffinity` types, then the pod can be scheduled onto a node if one of the `nodeSelectorTerms` is satisfied.
-- If you specify multiple `matchExpressions` associated with `nodeSelectorTerms`, then the pod can be scheduled onto a node only if all `matchExpressions` are satisfied.
 
 ## Using 'explain' learn about resources
 
