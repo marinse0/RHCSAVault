@@ -15,51 +15,15 @@ spec:
     seccompProfile:
       type: RuntimeDefault
   affinity:
-    nodeAffinity: 
-```
-
- 1 
-
-```yaml
-
-      requiredDuringSchedulingIgnoredDuringExecution: 
-```
-
- 2 
-
-```yaml
-
+    nodeAffinity: # 1 
+      requiredDuringSchedulingIgnoredDuringExecution: # 2 
         nodeSelectorTerms:
         - matchExpressions:
-          - key: e2e-az-NorthSouth 
-```
-
- 3 
-
-```yaml
-
-            operator: In 
-```
-
- 4 
-
-```yaml
-
+          - key: e2e-az-NorthSouth # 3 
+            operator: In # 4 
             values:
-            - e2e-az-North 
-```
-
- 5 
-
-```yaml
-
-            - e2e-az-South 
-```
-
- 6 
-
-```yaml
-
+            - e2e-az-North # 5 
+            - e2e-az-South # 6 
   containers:
   - name: with-node-affinity
     image: docker.io/ocpqe/hello-pod
@@ -69,21 +33,21 @@ spec:
         drop: [ALL]
 # ...
 ```
-[1](https://docs.redhat.com/en/documentation/openshift_container_platform/4.20/html/nodes/controlling-pod-placement-onto-nodes-scheduling#CO130-1)
 
-The stanza to configure node affinity.
+[1] The stanza to configure node affinity.
+[2] Defines a required rule.
+[3, 5, 6] The key/value pair (label) that must be matched to apply the rule.
+[4] The operator represents the relationship between the label on the node and the set of values in the `matchExpression` parameters in the `Pod` spec. This value can be `In`, `NotIn`, `Exists`, or `DoesNotExist`, `Lt`, or `Gt`.
 
-[2](https://docs.redhat.com/en/documentation/openshift_container_platform/4.20/html/nodes/controlling-pod-placement-onto-nodes-scheduling#CO130-2)
+There is no explicit _node anti-affinity_ concept, but using the `NotIn` or `DoesNotExist` operator replicates that behavior.
 
-Defines a required rule.
+<Note
 
-[3](https://docs.redhat.com/en/documentation/openshift_container_platform/4.20/html/nodes/controlling-pod-placement-onto-nodes-scheduling#CO130-3)[5](https://docs.redhat.com/en/documentation/openshift_container_platform/4.20/html/nodes/controlling-pod-placement-onto-nodes-scheduling#CO130-5)[6](https://docs.redhat.com/en/documentation/openshift_container_platform/4.20/html/nodes/controlling-pod-placement-onto-nodes-scheduling#CO130-6)
+If you are using node affinity and node selectors in the same pod configuration, note the following:
 
-The key/value pair (label) that must be matched to apply the rule.
-
-[4](https://docs.redhat.com/en/documentation/openshift_container_platform/4.20/html/nodes/controlling-pod-placement-onto-nodes-scheduling#CO130-4)
-
-The operator represents the relationship between the label on the node and the set of values in the `matchExpression` parameters in the `Pod` spec. This value can be `In`, `NotIn`, `Exists`, or `DoesNotExist`, `Lt`, or `Gt`.
+- If you configure both `nodeSelector` and `nodeAffinity`, both conditions must be satisfied for the pod to be scheduled onto a candidate node.
+- If you specify multiple `nodeSelectorTerms` associated with `nodeAffinity` types, then the pod can be scheduled onto a node if one of the `nodeSelectorTerms` is satisfied.
+- If you specify multiple `matchExpressions` associated with `nodeSelectorTerms`, then the pod can be scheduled onto a node only if all `matchExpressions` are satisfied.
 
 ## Using 'explain' learn about resources
 
