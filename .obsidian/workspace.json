@@ -41,12 +41,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "RedHat OpenShift Administration/RMA - Knowledge.md",
+                "file": "RedHat OpenShift Administration/II - Configuring a Production Cluster.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "RMA - Knowledge"
+              "title": "II - Configuring a Production Cluster"
             }
           }
         ],
@@ -169,13 +169,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "RedHat OpenShift Administration/RMA - Knowledge.md",
+                "file": "RedHat OpenShift Administration/II - Configuring a Production Cluster.md",
                 "followCursor": false,
                 "showSearch": true,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of RMA - Knowledge"
+              "title": "Outline of II - Configuring a Production Cluster"
             }
           },
           {
@@ -209,14 +209,14 @@
   },
   "active": "bafb41277fc4fa56",
   "lastOpenFiles": [
-    "RedHat OpenShift Administration/ODF office hours.md",
     "RedHat OpenShift Administration/RMA - Knowledge.md",
+    "RedHat OpenShift Administration/Red Hat OpenShift Data Foundation.md",
+    "RedHat OpenShift Administration/I - Operating a Production Cluster.md",
+    "RedHat OpenShift Administration/ODF office hours.md",
     "RedHat OpenShift Administration/II - Configuring a Production Cluster.md",
     "Study points for the exam.md",
     "RHEL9 Linux/Containers, Podman.md",
-    "RedHat OpenShift Administration/Red Hat OpenShift Data Foundation.md",
     "RH OCP/4. Deploy Managed and Networked Applications on Kubernetes.md",
-    "RedHat OpenShift Administration/I - Operating a Production Cluster.md",
     "RedHat OpenShift Administration",
     "RH OCP/3. Run Applications as Containers and Pods.md",
     "RH OCP/7.  Manage Application Updates.md",
