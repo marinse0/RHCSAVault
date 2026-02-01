@@ -1,4 +1,4 @@
-## affinity
+## Affinity
 
 The following example is a `Pod` spec with a rule that requires the pod be placed on a node with a label whose key is `e2e-az-NorthSouth` and whose value is either `e2e-az-North` or `e2e-az-South`:
 
