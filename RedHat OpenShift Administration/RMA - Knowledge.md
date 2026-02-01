@@ -102,9 +102,67 @@ A _node selector_ specifies a map of key/value pairs that are defined using cu
 
 For the pod to be eligible to run on a node, the pod must have the same key/value node selector as the label on the node.
 
-You can use node selectors on pods and labels on nodes to control where the pod is scheduled. With node selectors, OpenShift Container Platform schedules the pods on nodes that contain matching labels.
+You can use a node selector to:
+- place specific pods on specific nodes, 
+- cluster-wide node selectors to place new pods on specific nodes anywhere in the cluster, 
+- project node selectors to place new pods in a project on specific nodes.
 
-You can use a node selector to place specific pods on specific nodes, cluster-wide node selectors to place new pods on specific nodes anywhere in the cluster, and project node selectors to place new pods in a project on specific nodes.
+>Note
+You cannot add a node selector directly to an existing scheduled pod. You must label the object that controls the pod, such as deployment config.
+
+For example, the following `Node` object has the `region: east` label:
+
+**Sample `Node` object with a label**
+
+```yaml
+kind: Node
+apiVersion: v1
+metadata:
+  name: ip-10-0-131-14.ec2.internal
+  selfLink: /api/v1/nodes/ip-10-0-131-14.ec2.internal
+  uid: 7bc2580a-8b8e-11e9-8e01-021ab4174c74
+  resourceVersion: '478704'
+  creationTimestamp: '2019-06-10T14:46:08Z'
+  labels:
+    kubernetes.io/os: linux
+    ...
+    region: east # 1 
+    type: user-node
+#...
+```
+
+
+[1] Labels to match the pod node selector.
+
+A pod has the `type: user-node,region: east` node selector:
+
+**Sample `Pod` object with node selectors**
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: s1
+#...
+spec:
+  nodeSelector: 
+```
+
+ 1 
+
+```yaml
+
+    region: east
+    type: user-node
+#...
+```
+
+Show less
+
+[1](https://docs.redhat.com/en/documentation/openshift_container_platform/4.20/html/nodes/controlling-pod-placement-onto-nodes-scheduling#CO143-1)
+
+Node selectors to match the node label. The node must have a label for each node selector.
+
 
 ## Using 'explain' learn about resources
 
