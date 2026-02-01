@@ -131,7 +131,6 @@ metadata:
 #...
 ```
 
-
 [1] Labels to match the pod node selector.
 
 A pod has the `type: user-node,region: east` node selector:
@@ -145,23 +144,13 @@ metadata:
   name: s1
 #...
 spec:
-  nodeSelector: 
-```
-
- 1 
-
-```yaml
-
+  nodeSelector: # 1 
     region: east
     type: user-node
 #...
 ```
 
-Show less
-
-[1](https://docs.redhat.com/en/documentation/openshift_container_platform/4.20/html/nodes/controlling-pod-placement-onto-nodes-scheduling#CO143-1)
-
-Node selectors to match the node label. The node must have a label for each node selector.
+[1] Node selectors to match the node label. The node must have a label for each node selector.
 
 
 ## Using 'explain' learn about resources
