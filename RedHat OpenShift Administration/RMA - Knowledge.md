@@ -53,7 +53,6 @@ A _taint_ allows a node to refuse a pod to be scheduled unless that pod has a 
 You apply taints to a node through the `Node` specification (`NodeSpec`) and apply tolerations to a pod through the `Pod` specification (`PodSpec`). When you apply a taint to a node, the scheduler cannot place a pod on that node unless the pod can tolerate the taint.
 
 **Example taint in a node specification**
-
 ```yaml
 apiVersion: v1
 kind: Node
@@ -69,7 +68,6 @@ spec:
 ```
 
 **Example toleration in a `Pod` spec**
-
 ```yaml
 apiVersion: v1
 kind: Pod
@@ -112,8 +110,9 @@ You cannot add a node selector directly to an existing scheduled pod. You must l
 
 For example, the following `Node` object has the `region: east` label:
 
-**Sample `Node` object with a label**
+### Node selectors on specific pods and nodes
 
+**Sample `Node` object with a label**
 ```yaml
 kind: Node
 apiVersion: v1
@@ -136,7 +135,6 @@ metadata:
 A pod has the `type: user-node,region: east` node selector:
 
 **Sample `Pod` object with node selectors**
-
 ```yaml
 apiVersion: v1
 kind: Pod
@@ -152,6 +150,112 @@ spec:
 
 [1] Node selectors to match the node label. The node must have a label for each node selector.
 
+### Default cluster-wide node selectors
+
+With default cluster-wide node selectors, when you create a pod in that cluster, OpenShift Container Platform adds the default node selectors to the pod and schedules the pod on nodes with matching labels.
+
+For example, the following `Scheduler` object has the default cluster-wide `region=east` and `type=user-node` node selectors:
+
+**Example Scheduler Operator Custom Resource**
+
+```yaml
+apiVersion: config.openshift.io/v1
+kind: Scheduler
+metadata:
+  name: cluster
+#...
+spec:
+  defaultNodeSelector: type=user-node,region=east
+#...
+```
+
+A node in that cluster has the `type=user-node,region=east` labels:
+
+**Example `Node` object**
+```yaml
+apiVersion: v1
+kind: Node
+metadata:
+  name: ci-ln-qg1il3k-f76d1-hlmhl-worker-b-df2s4
+#...
+  labels:
+    region: east
+    type: user-node
+#...
+```
+
+**Example `Pod` object with a node selector**
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: s1
+#...
+spec:
+  nodeSelector:
+    region: east
+#...
+```
+
+When you create the pod using the example pod spec in the example cluster, the pod is created with the cluster-wide node selector and is scheduled on the labeled
+
+### Project node selectors
+
+With project node selectors, when you create a pod in this project, OpenShift Container Platform adds the node selectors to the pod and schedules the pods on a node with matching labels. 
+If there is a cluster-wide default node selector, a project node selector takes preference.
+
+For example, the following project has the `region=east` node selector:
+**Example `Namespace` object**
+```yaml
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: east-region
+  annotations:
+    openshift.io/node-selector: "region=east"
+#...
+```
+
+The following node has the `type=user-node,region=east` labels:
+**Example `Node` object**
+```yaml
+apiVersion: v1
+kind: Node
+metadata:
+  name: ci-ln-qg1il3k-f76d1-hlmhl-worker-b-df2s4
+#...
+  labels:
+    region: east
+    type: user-node
+#...
+```
+
+When you create the pod using the example pod spec in this example project, the pod is created with the project node selectors and is scheduled on the labeled node:
+**Example `Pod` object**
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  namespace: east-region
+#...
+spec:
+  nodeSelector:
+    region: east
+    type: user-node
+#...
+```
+
+Show more
+
+**Example pod list with the pod on the labeled node**
+
+```shell-session
+NAME     READY   STATUS    RESTARTS   AGE   IP           NODE                                       NOMINATED NODE   READINESS GATES
+pod-s1   1/1     Running   0          20s   10.131.2.6   ci-ln-qg1il3k-f76d1-hlmhl-worker-b-df2s4   <none>           <none>
+```
+
+A pod in the project is not created or scheduled if the pod contains different node selectors.
 
 ## Using 'explain' learn about resources
 
