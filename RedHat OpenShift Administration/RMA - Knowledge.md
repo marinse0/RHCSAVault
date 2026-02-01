@@ -97,7 +97,14 @@ A toleration matches a taint:
     - the `key` parameters are the same;
     - the `effect` parameters are the same.
 
-### Node selectore
+## Node selectors
+A _node selector_ specifies a map of key/value pairs that are defined using custom labels on nodes and selectors specified in pods.
+
+For the pod to be eligible to run on a node, the pod must have the same key/value node selector as the label on the node.
+
+You can use node selectors on pods and labels on nodes to control where the pod is scheduled. With node selectors, OpenShift Container Platform schedules the pods on nodes that contain matching labels.
+
+You can use a node selector to place specific pods on specific nodes, cluster-wide node selectors to place new pods on specific nodes anywhere in the cluster, and project node selectors to place new pods in a project on specific nodes.
 
 ## Using 'explain' learn about resources
 
