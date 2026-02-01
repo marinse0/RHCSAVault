@@ -97,6 +97,8 @@ A toleration matches a taint:
     - the `key` parameters are the same;
     - the `effect` parameters are the same.
 
+### Node selectore
+
 ## Using 'explain' learn about resources
 
 List all available resources (names, short names, api versions...)
