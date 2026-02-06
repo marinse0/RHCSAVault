@@ -98,7 +98,7 @@ A toleration matches a taint:
 ## Node selectors
 A _node selector_ specifies a map of key/value pairs that are defined using custom labels on nodes and selectors specified in pods.
 
-For the pod to be eligible to run on a node, the pod must have the same key/value node selector as the label on the node.
+==For the pod to be eligible to run on a node, the pod must have the same key/value node selector as the label on the node.
 
 You can use a node selector to:
 - place specific pods on specific nodes, 
