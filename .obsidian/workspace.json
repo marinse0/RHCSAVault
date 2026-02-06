@@ -209,8 +209,9 @@
   },
   "active": "bafb41277fc4fa56",
   "lastOpenFiles": [
-    "RedHat OpenShift Administration/II - Configuring a Production Cluster.md",
+    "Untitled.base",
     "RedHat OpenShift Administration/RMA - Knowledge.md",
+    "RedHat OpenShift Administration/II - Configuring a Production Cluster.md",
     "RedHat OpenShift Administration/Red Hat OpenShift Data Foundation.md",
     "RedHat OpenShift Administration/I - Operating a Production Cluster.md",
     "RedHat OpenShift Administration/ODF office hours.md",
@@ -236,7 +237,6 @@
     "RHEL9 Linux/Bash shell.md",
     "RH OCP",
     "RHEL9 Linux/Manage Files from the Command Line.md",
-    "Study Notes.md",
     "RHEL9 Linux"
   ]
 }
