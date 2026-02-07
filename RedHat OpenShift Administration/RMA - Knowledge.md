@@ -51,7 +51,9 @@ There is no explicit _node anti-affinity_ concept, but using the `NotIn` or�
 
 ==A _taint_ allows a node to refuse a pod to be scheduled unless that pod has a matching _toleration_.==
 
-You apply taints to a node through the `Node` specification (`NodeSpec`) and apply tolerations to a pod through the `Pod` specification (`PodSpec`). When you apply a taint to a node, the scheduler cannot place a pod on that node unless the pod can tolerate the taint.
+You apply taints to a node through the `Node` specification (`NodeSpec`) and apply tolerations to a pod through the `Pod` specification (`PodSpec`). 
+
+When you apply a taint to a node, the scheduler cannot place a pod on that node unless the pod can tolerate the taint.
 
 **Example taint in a node specification**
 ```yaml
