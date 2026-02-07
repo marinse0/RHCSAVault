@@ -41,25 +41,26 @@ Infrastructure nodes use taints to prevent a pod from being scheduled unless tha
 The following YAML example shows the taint in an infrastructure node specification:
 
 ```
-...output omitted..._
+...output omitted...
 spec:
   taints:
   - effect: NoSchedule
     key: node-role.kubernetes.io/infra
     value: reserved
-_...output omitted...
+...output omitted...
 ```
 
 The following YAML example shows the toleration in a pod specification:
 ```
-_...output omitted..._
+...output omitted...
 spec:
   tolerations:
   - effect: NoSchedule
     key: node-role.kubernetes.io/infra
     value: reserved
-_...output omitted..._
+...output omitted...
 ```
+
 Applying a taint to the infrastructure nodes and a toleration for that taint to all infrastructure components ensures that only those resources are scheduled on the infrastructure nodes.
 
 >Note
@@ -69,7 +70,9 @@ You can dedicate infrastructure nodes to OpenShift Data Foundation by adding an 
 
 You can add the OpenShift Data Foundation taint by using the following command:
 
-[user@host ~]$ **``oc adm taint node _`nodename`_ \   node.ocs.openshift.io/storage=true:NoSchedule``**
+```
+[user@host ~]$ oc adm taint node `nodename` \   node.ocs.openshift.io/storage=true:NoSchedule
+```
 
 >Note
 OpenShift Data Foundation components tolerate the OpenShift Data Foundation taint by default. You do not need to configure the toleration in the StorageCluster resource.
@@ -80,15 +83,19 @@ Add the OpenShift Data Foundation label to each node with storage devices. The O
 
 You can add the OpenShift Data Foundation label to the nodes by using the following command:
 
-[user@host ~]$ **``oc label node _`nodename`_ \   cluster.ocs.openshift.io/openshift-storage=''``**
+```
+[user@host ~]$ oc label node `nodename` \   cluster.ocs.openshift.io/openshift-storage=''
+```
 
 You can view the OpenShift Data Foundation labeled nodes by running the following command:
 
-[user@host ~]$ **`oc get nodes -l \   cluster.ocs.openshift.io/openshift-storage=""`**
+```
+[user@host ~]$ oc get nodes -l \   cluster.ocs.openshift.io/openshift-storage=""
 NAME       STATUS   ROLES ...
 worker01   Ready    worker   ...
 worker02   Ready    worker   ...
 worker03   Ready    worker   ...
+```
 
 #### Installing the Local Storage Operator
 
