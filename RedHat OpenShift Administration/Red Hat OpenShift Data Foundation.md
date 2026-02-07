@@ -40,16 +40,18 @@ Infrastructure nodes use taints to prevent a pod from being scheduled unless tha
 
 The following YAML example shows the taint in an infrastructure node specification:
 
-_...output omitted..._
+```
+...output omitted..._
 spec:
   taints:
   - effect: NoSchedule
     key: node-role.kubernetes.io/infra
     value: reserved
-_...output omitted..._
+_...output omitted...
+```
 
 The following YAML example shows the toleration in a pod specification:
-
+```
 _...output omitted..._
 spec:
   tolerations:
@@ -57,7 +59,7 @@ spec:
     key: node-role.kubernetes.io/infra
     value: reserved
 _...output omitted..._
-
+```
 Applying a taint to the infrastructure nodes and a toleration for that taint to all infrastructure components ensures that only those resources are scheduled on the infrastructure nodes.
 
 >Note
