@@ -41,12 +41,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "RedHat OpenShift Administration/RMA - Knowledge.md",
+                "file": "RedHat OpenShift Administration/I - Operating a Production Cluster.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "RMA - Knowledge"
+              "title": "I - Operating a Production Cluster"
             }
           }
         ],
@@ -169,13 +169,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "RedHat OpenShift Administration/RMA - Knowledge.md",
+                "file": "RedHat OpenShift Administration/I - Operating a Production Cluster.md",
                 "followCursor": false,
                 "showSearch": true,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of RMA - Knowledge"
+              "title": "Outline of I - Operating a Production Cluster"
             }
           },
           {
@@ -209,8 +209,8 @@
   },
   "active": "bafb41277fc4fa56",
   "lastOpenFiles": [
-    "RedHat OpenShift Administration/Red Hat OpenShift Data Foundation.md",
     "RedHat OpenShift Administration/RMA - Knowledge.md",
+    "RedHat OpenShift Administration/Red Hat OpenShift Data Foundation.md",
     "RedHat OpenShift Administration/II - Configuring a Production Cluster.md",
     "Untitled.base",
     "RedHat OpenShift Administration/I - Operating a Production Cluster.md",
