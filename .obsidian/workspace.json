@@ -55,12 +55,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "RedHat OpenShift Administration/I - Operating a Production Cluster.md",
+                "file": "RedHat OpenShift Administration/III - Scaling Deployments in the Enterprise.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "I - Operating a Production Cluster"
+              "title": "III - Scaling Deployments in the Enterprise"
             }
           }
         ],
@@ -183,13 +183,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "RedHat OpenShift Administration/I - Operating a Production Cluster.md",
-                "followCursor": false,
+                "file": "RedHat OpenShift Administration/III - Scaling Deployments in the Enterprise.md",
+                "followCursor": true,
                 "showSearch": true,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of I - Operating a Production Cluster"
+              "title": "Outline of III - Scaling Deployments in the Enterprise"
             }
           },
           {
@@ -223,12 +223,12 @@
   },
   "active": "53d52d6fb2d8ef17",
   "lastOpenFiles": [
+    "RedHat OpenShift Administration/I - Operating a Production Cluster.md",
+    "RedHat OpenShift Administration/II - Configuring a Production Cluster.md",
     "Untitled.base",
     "Study points for the exam.md",
     "RedHat OpenShift Administration/III - Scaling Deployments in the Enterprise.md",
     "Untitled.md",
-    "RedHat OpenShift Administration/I - Operating a Production Cluster.md",
-    "RedHat OpenShift Administration/II - Configuring a Production Cluster.md",
     "RHEL9 Linux/Linux Process States.md",
     "RHEL9 Linux/SELinux.md",
     "RedHat OpenShift Administration/RMA - Knowledge.md",
