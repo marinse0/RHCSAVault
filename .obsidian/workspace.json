@@ -221,11 +221,12 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "b9e58b4842556dbf",
+  "active": "53d52d6fb2d8ef17",
   "lastOpenFiles": [
     "Untitled.base",
-    "RedHat OpenShift Administration/III - Scaling Deployments in the Enterprise.md",
+    "Untitled.md",
     "RedHat OpenShift Administration/I - Operating a Production Cluster.md",
+    "RedHat OpenShift Administration/III - Scaling Deployments in the Enterprise.md",
     "RedHat OpenShift Administration/II - Configuring a Production Cluster.md",
     "RHEL9 Linux/Linux Process States.md",
     "RHEL9 Linux/SELinux.md",
@@ -249,7 +250,6 @@
     "RHEL9 Linux/Summary of DNF Commands.md",
     "RHEL9 Linux/RPM Software Packages.md",
     "RHEL9 Linux/Automount Network-Attached Storage.md",
-    "RHEL9 Linux/Regular Expressions.md",
     "RH OCP",
     "RHEL9 Linux"
   ]

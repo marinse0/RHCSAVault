@@ -15,8 +15,7 @@ An LDAP server can be configured as an Identity Provider (IdP) for authenticatio
 
 Although this implementation is sufficient for authenticating the user, it is still necessary to define the access for the user, based on group memberships and roles. Furthermore, configuration within the OpenShift cluster is required to synchronize groups from the LDAP database, as well as to define the appropriate access and permissions for each group.
 
-### Note
-
+>Note
 This section does not cover LDAP administration in depth, but only the necessary information for configuring LDAP integrations in an RHOCP cluster.
 
 ### Authentication by Using LDAP
@@ -549,7 +548,6 @@ After the file is created, the configured cron job executes the group synchroniz
 ### Objectives
 
 - Configure an OIDC identity provider and automate group synchronization between OpenShift OAuth and an OIDC server.
-    
 
 ### OpenID Connect
 
@@ -561,12 +559,9 @@ OIDC is the standard for cloud authentication, social authentication, single sig
 
 Examples of OIDC providers that are tested and supported on OpenShift include Google, Microsoft identity platform, and Keycloak. Red Hat provides Red Hat build of Keycloak to extend the capabilities of the OpenShift internal OAuth, and to serve as a solution for an OIDC identity infrastructure. Red Hat build of Keycloak replaces Red Hat SSO. Red Hat SSO is in the Maintenance Support phase. Red Hat build of Keycloak can run on bare-metal or virtualized environments, or as pods on OpenShift.
 
-### Note
-
+>Note
 For more information about Red Hat SSO, refer to the _Product Documentation for Red Hat Single Sign-On 7.6_ at [https://docs.redhat.com/en/documentation/red_hat_single_sign-on/7.6](https://docs.redhat.com/en/documentation/red_hat_single_sign-on/7.6)
-
 For more information about the Red Hat build of Keycloak, refer to the _Product Documentation for Red Hat build of Keycloak_ at [https://docs.redhat.com/en/documentation/red_hat_build_of_keycloak/](https://docs.redhat.com/en/documentation/red_hat_build_of_keycloak/)
-
 To see the full list of supported OIDC providers on OpenShift, refer to the _Supported Identity Providers_ section in the Red Hat OpenShift Container Platform 4.18 _Authentication and Authorization_ documentation at [https://docs.redhat.com/en/documentation/openshift_container_platform/4.18/html-single/authentication_and_authorization/index#identity-provider-oidc-supported_configuring-oidc-identity-provider](https://docs.redhat.com/en/documentation/openshift_container_platform/4.18/html-single/authentication_and_authorization/index#identity-provider-oidc-supported_configuring-oidc-identity-provider)
 
 #### OIDC Tokens
@@ -574,11 +569,8 @@ To see the full list of supported OIDC providers on OpenShift, refer to the _Su
 OIDC relies on the JavaScript Object Signing and Encryption (JOSE) set of standards. The primary standard within JOSE is JSON Web Token (JWT), which serves as a standardized format for representing information in a readable piece of text data. The following list shows some JWT advantages:
 
 - Can parse in many programming languages
-    
 - Can propagate across networks
-    
 - Validates message integrity without relying on external validators or resource-intensive checks
-    
 
 Three parts, which are separated by a period, form the JWT token: the header, the payload, and the hash signature.
 
@@ -618,16 +610,14 @@ Email address
 
 Display name
 
-### Note
-
+>Note
 To see the full list of standard claims that are defined in OIDC, refer to [https://openid.net/specs/openid-connect-core-1_0.html#StandardClaims](https://openid.net/specs/openid-connect-core-1_0.html#StandardClaims)
 
 #### OIDC Group Claims
 
 You can also define additional claims for parameters that OIDC does not define as standard claims. One important additional claim for users is the `group` claim. OpenShift uses the `group` claim to map the group membership of a user in the IdP to a group object. Then, you can use role-based access control (RBAC) objects in OpenShift to assign permissions to that group, instead of assigning permissions to individual users.
 
-### Note
-
+> Note
 The GitHub repository for the Red Hat Communities of Practice Group Sync Operator provides an unsupported operator for synchronizing OIDC groups with external providers that cannot provide group claims as part of their tokens. You can find more information in [https://github.com/redhat-cop/group-sync-operator](https://github.com/redhat-cop/group-sync-operator)
 
 ### Configuring OIDC IdP
@@ -635,15 +625,10 @@ The GitHub repository for the Red Hat Communities of Practice Group Sync Operat
 To integrate an OIDC IdP into the OpenShift cluster, complete the following steps:
 
 1. Obtain the client ID and the client secret from the OIDC IdP client for the OpenShift integration.
-    
 2. Create an OpenShift secret object, which contains the client secret that is obtained from the OIDC client configuration, in the `openshift-config` namespace.
-    
 3. Create an OpenShift configuration map object, which contains the certificate authority bundle in the `ca.crt` file parameter, in the `openshift-config` namespace (this step is required only if the CA certificate is not configured as a system-wide CA).
-    
 4. Create the OAuth CR YAML file to include the OIDC IdP.
-    
 5. Apply the configuration file to the OAuth CR.
-    
 
 #### Creating the OAuth CR YAML File
 
@@ -702,8 +687,7 @@ If your OIDC IdP supports the grant flow for resource owner password credentials
 
 If your OIDC IdP does not support the ROPC grant flow, then you receive the `You must obtain an API token` login error when you use the `oc login` command with a username and password. Then, you must get an OAuth access token and use it to log in by using the ``oc login --token=_`access_token`_`` command. You can get the OAuth access token by logging in through the OpenShift web console and clicking Help → Command line tools → Copy login command. You can also request the OAuth access token through the OpenShift REST API.
 
-### Note
-
+> Note
 Requesting an OAuth access token through the OpenShift REST API is out of the scope of this course. For more information about this topic, refer to [https://access.redhat.com/solutions/6610781](https://access.redhat.com/solutions/6610781)
 
 #### IdP Mapping Methods
@@ -728,4 +712,3 @@ You can use the following command to remove all access tokens for that user from
 
 [user@host ~]$ **``oc delete oauthaccesstoken $(oc get oauthaccesstoken -o \   jsonpath='{.items[?(@.userName=="_`username`_")].metadata.name}')``**
 
-### Ref
