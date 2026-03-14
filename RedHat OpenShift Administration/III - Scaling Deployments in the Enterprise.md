@@ -78,8 +78,7 @@ Whereas the LDAP server provides the validation to create an authentication bind
 
 An administrator must synchronize groups from an LDAP server as an additional cluster-side configuration before a full LDAP IdP configuration is complete. It is necessary to create a cluster cron job to routinely query the LDAP server and to update the OpenShift groups to ensure consistency within the cluster to any organizational updates to the LDAP group entries.
 
-### Note
-
+> Note
 Configuring and running the LDAP group synchronization are covered in the next section.
 
 ### LDAP CLI Queries

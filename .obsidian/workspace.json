@@ -53,14 +53,13 @@
             "id": "53d52d6fb2d8ef17",
             "type": "leaf",
             "state": {
-              "type": "markdown",
+              "type": "bases",
               "state": {
-                "file": "RedHat OpenShift Administration/III - Scaling Deployments in the Enterprise.md",
-                "mode": "source",
-                "source": false
+                "file": "Untitled.base",
+                "viewName": "Table"
               },
-              "icon": "lucide-file",
-              "title": "III - Scaling Deployments in the Enterprise"
+              "icon": "lucide-table",
+              "title": "Untitled"
             }
           }
         ],
@@ -183,13 +182,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "RedHat OpenShift Administration/III - Scaling Deployments in the Enterprise.md",
+                "file": "Untitled.base",
                 "followCursor": false,
                 "showSearch": true,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of III - Scaling Deployments in the Enterprise"
+              "title": "Outline of Untitled"
             }
           },
           {
@@ -223,14 +222,14 @@
   },
   "active": "53d52d6fb2d8ef17",
   "lastOpenFiles": [
+    "Study points for the exam.md",
     "Untitled.base",
+    "RedHat OpenShift Administration/III - Scaling Deployments in the Enterprise.md",
     "Untitled.md",
     "RedHat OpenShift Administration/I - Operating a Production Cluster.md",
-    "RedHat OpenShift Administration/III - Scaling Deployments in the Enterprise.md",
     "RedHat OpenShift Administration/II - Configuring a Production Cluster.md",
     "RHEL9 Linux/Linux Process States.md",
     "RHEL9 Linux/SELinux.md",
-    "Study points for the exam.md",
     "RedHat OpenShift Administration/RMA - Knowledge.md",
     "RedHat OpenShift Administration/Red Hat OpenShift Data Foundation.md",
     "RedHat OpenShift Administration/ODF office hours.md",
