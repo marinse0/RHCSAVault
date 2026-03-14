@@ -39,14 +39,13 @@
             "id": "bafb41277fc4fa56",
             "type": "leaf",
             "state": {
-              "type": "markdown",
+              "type": "bases",
               "state": {
-                "file": "RedHat OpenShift Administration/I - Operating a Production Cluster.md",
-                "mode": "source",
-                "source": false
+                "file": "Untitled.base",
+                "viewName": "Table"
               },
-              "icon": "lucide-file",
-              "title": "I - Operating a Production Cluster"
+              "icon": "lucide-table",
+              "title": "Untitled"
             }
           }
         ],
@@ -169,13 +168,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "RedHat OpenShift Administration/I - Operating a Production Cluster.md",
+                "file": "Untitled.base",
                 "followCursor": false,
                 "showSearch": true,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of I - Operating a Production Cluster"
+              "title": "Outline of Untitled"
             }
           },
           {
@@ -209,13 +208,15 @@
   },
   "active": "bafb41277fc4fa56",
   "lastOpenFiles": [
+    "RHEL9 Linux/Linux Process States.md",
+    "Untitled.base",
+    "RHEL9 Linux/SELinux.md",
+    "Study points for the exam.md",
     "RedHat OpenShift Administration/RMA - Knowledge.md",
+    "RedHat OpenShift Administration/I - Operating a Production Cluster.md",
     "RedHat OpenShift Administration/Red Hat OpenShift Data Foundation.md",
     "RedHat OpenShift Administration/II - Configuring a Production Cluster.md",
-    "Untitled.base",
-    "RedHat OpenShift Administration/I - Operating a Production Cluster.md",
     "RedHat OpenShift Administration/ODF office hours.md",
-    "Study points for the exam.md",
     "RHEL9 Linux/Containers, Podman.md",
     "RH OCP/4. Deploy Managed and Networked Applications on Kubernetes.md",
     "RedHat OpenShift Administration",
@@ -229,7 +230,6 @@
     "RHEL9 Linux/Network Configuration Files.md",
     "RHEL9 Linux/Boot process.md",
     "RHEL9 Linux/Basic storage.md",
-    "RHEL9 Linux/SELinux.md",
     "RHEL9 Linux/Summary of DNF Commands.md",
     "RHEL9 Linux/RPM Software Packages.md",
     "RHEL9 Linux/Automount Network-Attached Storage.md",
