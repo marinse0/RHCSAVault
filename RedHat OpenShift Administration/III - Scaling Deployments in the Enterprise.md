@@ -732,13 +732,9 @@ A service account (SA) is a Kubernetes resource that provides an identity for a 
 For example, you can use SAs in the following scenarios:
 
 - A replication controller makes API calls to create or delete pods.
-    
 - A pod that collects logs might need access to certain log storage resources.
-    
 - A backup and restore tool might require access to the cluster's configuration and data to back up and restore data.
-    
 - An external application makes monitoring or integration API calls.
-    
 
 SAs are specific to a particular project and cannot be directly shared across projects. Each SA user name is derived from its project and name; for example, the following SA named `test-sa` belongs to the `test` project:
 
@@ -778,8 +774,7 @@ OpenShift assigns this default SA to pods if you do not specify a different SA w
 
 Bound service account tokens are a more secure type of JWTs. Unlike the legacy secret-based tokens that never expired, bound service account tokens are time-limited, and are bound to specific objects or audiences. The bound tokens are invalidated when the bound object is removed. You can request bound service account tokens by using volume projection and the `TokenRequest` API.
 
-### Warning
-
+>Warning
 You can still manually create legacy long-lived API tokens for SAs. However, Red Hat recommends using long-lived API tokens only if you cannot use the `TokenRequest` API and if the security exposure of a non-expiring token is acceptable to you. To manually create long-lived API tokens for SAs, refer to [https://docs.redhat.com/en/documentation/openshift_container_platform/4.18/html-single/nodes/index#nodes-pods-secrets-creating-sa_nodes-pods-secrets](https://docs.redhat.com/en/documentation/openshift_container_platform/4.18/html-single/nodes/index#nodes-pods-secrets-creating-sa_nodes-pods-secrets)
 
 ##### Configuring Bound Service Account Tokens by Using Volume Projection
@@ -799,7 +794,7 @@ _Authentication flow for bound service account tokens_
 |![3](https://rol.redhat.com/rol/static/roc/Common_Content/images/3.svg)|The application reads the SA token and uses it to authenticate to the Kubernetes API.|
 
 The following pod YAML definition shows how to mount a bound SA token by using volume projection:
-
+```yaml
 apiVersion: v1
 kind: Pod
 metadata:
@@ -813,15 +808,16 @@ _...output omitted..._
     - mountPath: /var/run/secrets/tokens
       name: vault-token
 _...output omitted..._
-  `serviceAccountName`: _`build-robot`_ ![1](https://rol.redhat.com/rol/static/roc/Common_Content/images/1.svg)
+  `serviceAccountName`: build-robot #![1](https://rol.redhat.com/rol/static/roc/Common_Content/images/1.svg)
   volumes:
   - name: vault-token
     projected:
       sources:
       - serviceAccountToken:
-          `path`: _`vault-token`_  ![2](https://rol.redhat.com/rol/static/roc/Common_Content/images/2.svg)
-          `expirationSeconds`: _`7200`_  ![3](https://rol.redhat.com/rol/static/roc/Common_Content/images/3.svg)
-          `audience`: _`vault`_  ![4](https://rol.redhat.com/rol/static/roc/Common_Content/images/4.svg)
+          `path`: vault-token  #![2](https://rol.redhat.com/rol/static/roc/Common_Content/images/2.svg)
+          `expirationSeconds`: 7200  #![3](https://rol.redhat.com/rol/static/roc/Common_Content/images/3.svg)
+          `audience`: vault #![4](https://rol.redhat.com/rol/static/roc/Common_Content/images/4.svg)
+```
 
 |   |   |
 |---|---|
@@ -876,16 +872,14 @@ By default, OpenShift provides an internal certificate authority (CA). The OpenS
 
 The Kubernetes API server requires client authentication by using client certificates. OpenShift is preconfigured to trust the client certificates that the OpenShift internal CA signs.
 
-### Note
-
+>Note
 You can also configure additional client CAs for the Kubernetes API server. For more information about configuring additional client CAs for the Kubernetes API server, refer to [https://access.redhat.com/solutions/6054271](https://access.redhat.com/solutions/6054271)
 
 This feature is mainly used to generate a client certificate for an administrator user, such as the predefined `system:admin` user, to use this client certificate as a backdoor for cluster administrators in the event of failure of the IdP that provides the administrator credentials.
 
 Although Red Hat does not recommend doing so, you can also use client certificates in certain scenarios when running outside the cluster, such as CI/CD pipelines, automation playbooks, or monitoring tools. These clients need to present valid client certificates during the TLS handshake to establish a secure connection with the API server. This mechanism ensures that only authorized clients can access the API server from outside the cluster.
 
-### Warning
-
+>Warning
 Red Hat recommends using SAs to run automation outside the cluster whenever you can, instead of using client certificates, because a certificate cannot be revoked in OpenShift. Revoking a client certificate would require invalidating all client certificates that the current CA ever signed, and creating replacement certificates for all client users and applications. For more information about this topic, refer to [https://github.com/kubernetes/kubernetes/issues/18982](https://github.com/kubernetes/kubernetes/issues/18982)
 
 #### Create a Client Certificate
@@ -896,9 +890,11 @@ To create client certificates by using the internal OpenShift CA, you must follo
 
 1. Create a certificate signing request (CSR): The first step is to create a CSR for the client. You can use the OpenSSL tool to create the CSR. This request includes the client's information and the public key. You can use more than one group for the user if you require it.
     
-    [user@host ~]$ **``openssl req -noenc -newkey rsa:4096 -keyout _`key_filename`_ \   -subj "/O=_`group1`_/O=_`group2`_/CN=_`username`_" -out _`csr_filename`_``**
+```sh
+    [user@host ~]$ openssl req -noenc -newkey rsa:4096 -keyout _`key_filename`_ \   -subj "/O=_`group1`_/O=_`group2`_/CN=_`username`_" -out _`csr_filename`_``**
     
-2. Create the CSR YAML resource manifest. The following example shows the parameters for a CSR:
+```
+1. Create the CSR YAML resource manifest. The following example shows the parameters for a CSR:
     
     apiVersion: certificates.k8s.io/v1
     kind: CertificateSigningRequest
@@ -911,7 +907,8 @@ To create client certificates by using the internal OpenShift CA, you must follo
       `usages`: ![5](https://rol.redhat.com/rol/static/roc/Common_Content/images/5.svg)
       - client auth
     
-    |   |   |
+
+    
     |---|---|
     |[![1](https://rol.redhat.com/rol/static/roc/Common_Content/images/1.svg)](https://rol.redhat.com/rol/app/#_create_a_client_certificate-CO20-1)|The CSR name.|
     |[![2](https://rol.redhat.com/rol/static/roc/Common_Content/images/2.svg)](https://rol.redhat.com/rol/app/#_create_a_client_certificate-CO20-2)|The `kube-apiserver-client` built-in signer of certificates that the API server accepts. OpenShift provides different built-in signers that you can use to sign certificates. For more information, refer to [https://kubernetes.io/docs/reference/access-authn-authz/certificate-signing-requests/#kubernetes-signers](https://kubernetes.io/docs/reference/access-authn-authz/certificate-signing-requests/#kubernetes-signers)|
@@ -919,19 +916,19 @@ To create client certificates by using the internal OpenShift CA, you must follo
     |[![4](https://rol.redhat.com/rol/static/roc/Common_Content/images/4.svg)](https://rol.redhat.com/rol/app/#_create_a_client_certificate-CO20-4)|The OpenSSL X.509 CSR, which is encoded in Base64 format.|
     |[![5](https://rol.redhat.com/rol/static/roc/Common_Content/images/5.svg)](https://rol.redhat.com/rol/app/#_create_a_client_certificate-CO20-5)|The use cases for the client certificate. It must include the `client auth` usage, which indicates that the certificate is intended for client authentication.|
     
-3. Submit the CSR to the Kubernetes API server. The API server interacts with the internal CA to process the CSR.
+2. Submit the CSR to the Kubernetes API server. The API server interacts with the internal CA to process the CSR.
     
     [user@host ~]$ **`oc apply -f csr.yaml`**
     
-4. Review, approve, and sign the CSR: You can review the CSR details by using the ``oc describe csr _`csr_name`_`` command. After reviewing the CSR details, use the following command so the internal CA signs the CSR to generate the client certificate:
+3. Review, approve, and sign the CSR: You can review the CSR details by using the ``oc describe csr _`csr_name`_`` command. After reviewing the CSR details, use the following command so the internal CA signs the CSR to generate the client certificate:
     
     [user@host ~]$ **``oc adm certificate approve _`csr_name`_``**
     
-5. Retrieve the client certificate: After you approve the CSR and the OpenShift internal CA generates the certificate, you can retrieve the signed certificate from the API server.
+4. Retrieve the client certificate: After you approve the CSR and the OpenShift internal CA generates the certificate, you can retrieve the signed certificate from the API server.
     
     [user@host ~]$ **``oc get csr _`csr_name`_ -o jsonpath='{.status.certificate}' \   | base64 -d > _`certificate_filename`_``**
     
-6. Distribute the certificate: The signed certificate, together with the private key that generates the CSR, enables the client to authenticate to the cluster.
+5. Distribute the certificate: The signed certificate, together with the private key that generates the CSR, enables the client to authenticate to the cluster.
     
 
 ### OpenShift CLI Configuration Files
