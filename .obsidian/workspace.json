@@ -53,13 +53,14 @@
             "id": "53d52d6fb2d8ef17",
             "type": "leaf",
             "state": {
-              "type": "bases",
+              "type": "markdown",
               "state": {
-                "file": "Untitled.base",
-                "viewName": "Table"
+                "file": "RedHat OpenShift Administration/I - Operating a Production Cluster.md",
+                "mode": "source",
+                "source": false
               },
-              "icon": "lucide-table",
-              "title": "Untitled"
+              "icon": "lucide-file",
+              "title": "I - Operating a Production Cluster"
             }
           }
         ],
@@ -182,13 +183,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "Untitled.base",
+                "file": "RedHat OpenShift Administration/I - Operating a Production Cluster.md",
                 "followCursor": false,
                 "showSearch": true,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of Untitled"
+              "title": "Outline of I - Operating a Production Cluster"
             }
           },
           {
@@ -222,8 +223,8 @@
   },
   "active": "53d52d6fb2d8ef17",
   "lastOpenFiles": [
-    "Study points for the exam.md",
     "Untitled.base",
+    "Study points for the exam.md",
     "RedHat OpenShift Administration/III - Scaling Deployments in the Enterprise.md",
     "Untitled.md",
     "RedHat OpenShift Administration/I - Operating a Production Cluster.md",

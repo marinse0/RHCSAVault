@@ -1,3 +1,4 @@
+
 # Chapter 1.  OpenShift Basics
 
 ## The RHOCP CLI
