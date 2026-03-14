@@ -891,25 +891,28 @@ To create client certificates by using the internal OpenShift CA, you must follo
 1. Create a certificate signing request (CSR): The first step is to create a CSR for the client. You can use the OpenSSL tool to create the CSR. This request includes the client's information and the public key. You can use more than one group for the user if you require it.
     
 ```sh
-    [user@host ~]$ openssl req -noenc -newkey rsa:4096 -keyout _`key_filename`_ \   -subj "/O=_`group1`_/O=_`group2`_/CN=_`username`_" -out _`csr_filename`_``**
+    [user@host ~]$ openssl req -noenc -newkey rsa:4096 -keyout key_filename \
+    -subj "/O=group1/O=_`group2`_/CN=username" -out _csr_filename
     
 ```
 1. Create the CSR YAML resource manifest. The following example shows the parameters for a CSR:
     
+```yaml
     apiVersion: certificates.k8s.io/v1
     kind: CertificateSigningRequest
     metadata:
-      `name`: _`csr_name`_ ![1](https://rol.redhat.com/rol/static/roc/Common_Content/images/1.svg)
+      `name`: csr_name #![1](https://rol.redhat.com/rol/static/roc/Common_Content/images/1.svg)
     spec:
-      `signerName`: kubernetes.io/kube-apiserver-client ![2](https://rol.redhat.com/rol/static/roc/Common_Content/images/2.svg)
-      `expirationSeconds`: _`604800`_ # one week ![3](https://rol.redhat.com/rol/static/roc/Common_Content/images/3.svg)
-      `request`: $(base64 -w0 _`csr_filename`_) ![4](https://rol.redhat.com/rol/static/roc/Common_Content/images/4.svg)
-      `usages`: ![5](https://rol.redhat.com/rol/static/roc/Common_Content/images/5.svg)
+      `signerName`: kubernetes.io/kube-apiserver-client #![2](https://rol.redhat.com/rol/static/roc/Common_Content/images/2.svg)
+      `expirationSeconds`: 604800  # one week ![3](https://rol.redhat.com/rol/static/roc/Common_Content/images/3.svg)
+      `request`: $(base64 -w0 csr_filename) #![4](https://rol.redhat.com/rol/static/roc/Common_Content/images/4.svg)
+      `usages`: #![5](https://rol.redhat.com/rol/static/roc/Common_Content/images/5.svg)
       - client auth
     
+```
 
-    
-    |---|---|
+   |  |  | 
+   |---|---|
     |[![1](https://rol.redhat.com/rol/static/roc/Common_Content/images/1.svg)](https://rol.redhat.com/rol/app/#_create_a_client_certificate-CO20-1)|The CSR name.|
     |[![2](https://rol.redhat.com/rol/static/roc/Common_Content/images/2.svg)](https://rol.redhat.com/rol/app/#_create_a_client_certificate-CO20-2)|The `kube-apiserver-client` built-in signer of certificates that the API server accepts. OpenShift provides different built-in signers that you can use to sign certificates. For more information, refer to [https://kubernetes.io/docs/reference/access-authn-authz/certificate-signing-requests/#kubernetes-signers](https://kubernetes.io/docs/reference/access-authn-authz/certificate-signing-requests/#kubernetes-signers)|
     |[![3](https://rol.redhat.com/rol/static/roc/Common_Content/images/3.svg)](https://rol.redhat.com/rol/app/#_create_a_client_certificate-CO20-3)|The expiration time for the certificate in seconds. If you do not specify a value, then the default value is 30 days.|
@@ -996,11 +999,11 @@ current-context: demo-app/api-ocp4-stage-com:6443/admin-stage
 kind: Config
 preferences: {}
 
-|   |   |
-|---|---|
-|[![1](https://rol.redhat.com/rol/static/roc/Common_Content/images/1.svg)](https://rol.redhat.com/rol/app/#_kubeconfig_file_details-CO21-1)|The list of all the clusters that you already connected to.|
-|[![2](https://rol.redhat.com/rol/static/roc/Common_Content/images/2.svg)](https://rol.redhat.com/rol/app/#_kubeconfig_file_details-CO21-2)|The list of all the users that you already connected to the cluster.|
-|[![3](https://rol.redhat.com/rol/static/roc/Common_Content/images/3.svg)](https://rol.redhat.com/rol/app/#_kubeconfig_file_details-CO21-3)|The list of contexts that you can reference when using the `oc` command.|
+|                                                                                                                                            |                                                                          |
+| ------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------ |
+| [![1](https://rol.redhat.com/rol/static/roc/Common_Content/images/1.svg)](https://rol.redhat.com/rol/app/#_kubeconfig_file_details-CO21-1) | The list of all the clusters that you already connected to.              |
+| [![2](https://rol.redhat.com/rol/static/roc/Common_Content/images/2.svg)](https://rol.redhat.com/rol/app/#_kubeconfig_file_details-CO21-2) | The list of all the users that you already connected to the cluster.     |
+| [![3](https://rol.redhat.com/rol/static/roc/Common_Content/images/3.svg)](https://rol.redhat.com/rol/app/#_kubeconfig_file_details-CO21-3) | The list of contexts that you can reference when using the `oc` command. |
 
 The previous `kubeconfig` example file defines two clusters, `production` and `stage`, with their FQDNs that are defined in the `server` parameter. The `stage` cluster definition also contains the public certificate from the API server in the `certificate-authority` parameter.
 
@@ -1032,8 +1035,7 @@ Creates a context entry in the `kubeconfig` file. Use this subcommand to defin
 
 Sets the current context.
 
-### Note
-
+>Note
 For more information about manually configuring the `kubeconfig` files by using the `oc config` command, consult the references section.
 
 ### User Impersonation
@@ -1087,4 +1089,3 @@ worker01   Ready    worker                        2d12h   v1.31.6
 worker02   Ready    worker                        2d12h   v1.31.6
 worker03   Ready    worker                        2d12h   v1.31.6
 
-### References
