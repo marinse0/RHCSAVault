@@ -697,11 +697,13 @@ IdP mapping methods apply to any IdP. If you configure the `mappingMethod` par
 
 The first time that a user logs in to the cluster, the OpenShift built-in OAuth server creates an OAuth token to authenticate to the API. OAuth access tokens are common to any IdP. OpenShift renews the API authentication token every time that the user logs in to the cluster. As a user, you can list all your user-owned OAuth access tokens by using the following command. This command lists all the user-owned OAuth access tokens from any IdP that is configured in the OpenShift built-in OAuth server.
 
-[user@host ~]$ **`oc get useroauthaccesstokens`**
+```sh
+[user@host ~]$ oc get useroauthaccesstokens
 NAME            CLIENT NAME    CREATED   EXPIRES                        ...
 sha256~9BZ3...  openshift-...  6m        2025-12-17 13:24:42 +0000 UTC  ...
 sha256~lm1O...  console        7m        2025-12-17 13:19:20 +0000 UTC  ...
 sha256~xmpC...  openshift-...  8m        2025-12-17 13:11:24 +0000 UTC  ...
+```
 
 If you modify a user parameter in the OIDC IdP, then the changes do not automatically synchronize with OpenShift. For example, if you remove a user account from the OIDC IdP and the user is logged in to OpenShift, then the user can still perform tasks in OpenShift until they log out, because they still have a valid token that the OpenShift built-in OAuth server issued.
 
@@ -709,5 +711,6 @@ For this reason, after you modify a parameter in the OIDC IdP, you must remove a
 
 You can use the following command to remove all access tokens for that user from OpenShift:
 
-[user@host ~]$ **``oc delete oauthaccesstoken $(oc get oauthaccesstoken -o \   jsonpath='{.items[?(@.userName=="_`username`_")].metadata.name}')``**
-
+```sh
+[user@host ~]$ `oc delete oauthaccesstoken $(oc get oauthaccesstoken -o \   jsonpath='{.items[?(@.userName=="_`username`_")].metadata.name}')`
+```
