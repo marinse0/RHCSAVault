@@ -714,3 +714,380 @@ You can use the following command to remove all access tokens for that user from
 ```sh
 [user@host ~]$ `oc delete oauthaccesstoken $(oc get oauthaccesstoken -o \   jsonpath='{.items[?(@.userName=="_`username`_")].metadata.name}')`
 ```
+
+## Token and Client Certificate Authentication with `kubeconfig` Files
+
+### Objectives
+
+- Generate a token and a client certificate and add them to a `kubeconfig` file.
+
+### External Client Authentication
+
+In certain scenarios, you might authenticate external clients, such as CI/CD pipelines or monitoring tools, to the Kubernetes cluster. Kubernetes enables external clients to authenticate to the Kubernetes API by embedding either a client certificate or an authentication token into a `kubeconfig` configuration file. This feature ensures that only authorized external clients can access the Kubernetes cluster.
+
+### Service Accounts
+
+A service account (SA) is a Kubernetes resource that provides an identity for a component to authenticate to the Kubernetes API server. SAs provide a flexible way to control API access without sharing a regular user's credentials. SAs use signed JSON Web Tokens (JWTs) to authenticate to the API server, as well as with external resources.
+
+For example, you can use SAs in the following scenarios:
+
+- A replication controller makes API calls to create or delete pods.
+    
+- A pod that collects logs might need access to certain log storage resources.
+    
+- A backup and restore tool might require access to the cluster's configuration and data to back up and restore data.
+    
+- An external application makes monitoring or integration API calls.
+    
+
+SAs are specific to a particular project and cannot be directly shared across projects. Each SA user name is derived from its project and name; for example, the following SA named `test-sa` belongs to the `test` project:
+
+system:serviceaccount:test:test-sa
+
+Every SA is also a member of the following two groups:
+
+`system:serviceaccounts`
+
+This group includes all service accounts in the system.
+
+``system:serviceaccounts:_`project`_``
+
+This group includes all service accounts in the specified project.
+
+#### Manage SAs
+
+To manage SAs, you use the standard `oc` commands, such as `create`, `get`, or `describe`. You can grant roles to SAs the same as for regular users. You can also use the `-z` option to avoid using the long ``system:serviceaccount:_`project`_:_`name`_`` SA name, and use instead the short SA ``_`name`_`` name.
+
+#### Default Service Accounts
+
+OpenShift contains default service accounts for cluster management, and generates the following service accounts for each project:
+
+`builder`
+
+OpenShift uses this SA to build pods. By default, this SA has the `system:image-builder` role, so the resource can push images to any image stream in the project by using the internal Docker registry.
+
+`deployer`
+
+OpenShift uses this SA in deployment pods. By default, this SA has the `system:deployer` role, so the resource can view and modify replication controllers and pods in the project. This SA exists only for applications that use OpenShift deployment configuration resources.
+
+`default`
+
+OpenShift assigns this default SA to pods if you do not specify a different SA when you create the pods.
+
+#### Bound Service Account Tokens
+
+Bound service account tokens are a more secure type of JWTs. Unlike the legacy secret-based tokens that never expired, bound service account tokens are time-limited, and are bound to specific objects or audiences. The bound tokens are invalidated when the bound object is removed. You can request bound service account tokens by using volume projection and the `TokenRequest` API.
+
+### Warning
+
+You can still manually create legacy long-lived API tokens for SAs. However, Red Hat recommends using long-lived API tokens only if you cannot use the `TokenRequest` API and if the security exposure of a non-expiring token is acceptable to you. To manually create long-lived API tokens for SAs, refer to [https://docs.redhat.com/en/documentation/openshift_container_platform/4.18/html-single/nodes/index#nodes-pods-secrets-creating-sa_nodes-pods-secrets](https://docs.redhat.com/en/documentation/openshift_container_platform/4.18/html-single/nodes/index#nodes-pods-secrets-creating-sa_nodes-pods-secrets)
+
+##### Configuring Bound Service Account Tokens by Using Volume Projection
+
+You can configure pods to request bound service account tokens by using volume projection. The following diagram summarizes the authentication flow by using the `TokenRequest` API:
+
+|   |
+|---|
+|![](https://static.ole.redhat.com/rhls/courses/do380-4.18/images/auth/tls/assets/tokenapi.svg)|
+
+_Authentication flow for bound service account tokens_
+
+|   |   |
+|---|---|
+|![1](https://rol.redhat.com/rol/static/roc/Common_Content/images/1.svg)|An application that is running in a pod needs to authenticate to the Kubernetes API. The `kubelet` agent requests a bound SA account token from the `TokenRequest` API.|
+|![2](https://rol.redhat.com/rol/static/roc/Common_Content/images/2.svg)|The `kubelet` agent receives the SA token from the `TokenRequest` API and mounts it to the pod.|
+|![3](https://rol.redhat.com/rol/static/roc/Common_Content/images/3.svg)|The application reads the SA token and uses it to authenticate to the Kubernetes API.|
+
+The following pod YAML definition shows how to mount a bound SA token by using volume projection:
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx
+spec:
+_...output omitted..._
+  containers:
+  - image: nginx
+    name: nginx
+    volumeMounts:
+    - mountPath: /var/run/secrets/tokens
+      name: vault-token
+_...output omitted..._
+  `serviceAccountName`: _`build-robot`_ ![1](https://rol.redhat.com/rol/static/roc/Common_Content/images/1.svg)
+  volumes:
+  - name: vault-token
+    projected:
+      sources:
+      - serviceAccountToken:
+          `path`: _`vault-token`_  ![2](https://rol.redhat.com/rol/static/roc/Common_Content/images/2.svg)
+          `expirationSeconds`: _`7200`_  ![3](https://rol.redhat.com/rol/static/roc/Common_Content/images/3.svg)
+          `audience`: _`vault`_  ![4](https://rol.redhat.com/rol/static/roc/Common_Content/images/4.svg)
+
+|   |   |
+|---|---|
+|[![1](https://rol.redhat.com/rol/static/roc/Common_Content/images/1.svg)](https://rol.redhat.com/rol/app/#_configuring_bound_service_account_tokens_by_using_volume_projection-CO18-1)|The name of the service account.|
+|[![2](https://rol.redhat.com/rol/static/roc/Common_Content/images/2.svg)](https://rol.redhat.com/rol/app/#_configuring_bound_service_account_tokens_by_using_volume_projection-CO18-2)|The path relative to the mount point of the file to project the token to.|
+|[![3](https://rol.redhat.com/rol/static/roc/Common_Content/images/3.svg)](https://rol.redhat.com/rol/app/#_configuring_bound_service_account_tokens_by_using_volume_projection-CO18-3)|Optional, the expiration time in seconds of the service account token. The default value is 3600 seconds. The kubelet starts trying to rotate the token if the token is older than 80 percent of its time to live, or if the token is older than 24 hours.|
+|[![4](https://rol.redhat.com/rol/static/roc/Common_Content/images/4.svg)](https://rol.redhat.com/rol/app/#_configuring_bound_service_account_tokens_by_using_volume_projection-CO18-4)|Optional, the intended audience of the token. The recipient of a token verifies that the recipient identity matches the audience claim of the token, and should otherwise reject the token. The default value is the identifier of the API server.|
+
+##### Creating Bound Service Account Tokens Outside a Pod
+
+For external applications, you can manually generate a bound SA token by using the `TokenRequest` API, and use it as the bearer token for authentication to the Kubernetes API. The client includes the `Authorization: Bearer <token>` header with the HTTP request.
+
+The following command creates a bound SA token for the `my-sa` SA by using the `TokenRequest` API:
+
+[user@host ~]$ **`oc create token my-sa`**
+
+You can set the lifetime for the SA token by using the --duration option. The default lifetime for the SA token is one hour. You must manually refresh the manually generated SA token before it expires, so that your application can continue authenticating to the Kubernetes API.
+
+The following example shows a decoded JWT SA token:
+
+{
+  "aud": [
+    "https://kubernetes.default.svc"
+  ],
+  `"exp"`: _`1765671322`_, ![1](https://rol.redhat.com/rol/static/roc/Common_Content/images/1.svg)
+  `"iat"`: _`1765667722`_, ![2](https://rol.redhat.com/rol/static/roc/Common_Content/images/2.svg)
+  "iss": "https://kubernetes.default.svc",
+  "jti": "516a902a-c59c-4f3b-a24c-329dde511782",
+  "kubernetes.io": {
+    `"namespace"`: "_`test`_", ![3](https://rol.redhat.com/rol/static/roc/Common_Content/images/3.svg)
+    "serviceaccount": {
+      `"name"`: "_`my-sa`_", ![4](https://rol.redhat.com/rol/static/roc/Common_Content/images/4.svg)
+      "uid": "e0dda498-399b-470c-84df-3813ac469fb2"
+    }
+  },
+  "nbf": 1765667722,
+  "sub": "system:serviceaccount:test:my-sa"
+}
+
+|   |   |
+|---|---|
+|[![1](https://rol.redhat.com/rol/static/roc/Common_Content/images/1.svg)](https://rol.redhat.com/rol/app/#_creating_bound_service_account_tokens_outside_a_pod-CO19-1)|The SA token expiration date in Unix epoch format|
+|[![2](https://rol.redhat.com/rol/static/roc/Common_Content/images/2.svg)](https://rol.redhat.com/rol/app/#_creating_bound_service_account_tokens_outside_a_pod-CO19-2)|The SA token issued date in Unix epoch format|
+|[![3](https://rol.redhat.com/rol/static/roc/Common_Content/images/3.svg)](https://rol.redhat.com/rol/app/#_creating_bound_service_account_tokens_outside_a_pod-CO19-3)|The project for the SA token|
+|[![4](https://rol.redhat.com/rol/static/roc/Common_Content/images/4.svg)](https://rol.redhat.com/rol/app/#_creating_bound_service_account_tokens_outside_a_pod-CO19-4)|The name for the SA|
+
+### Client Certificate Authentication
+
+Client certificate authentication in Kubernetes clusters refers to the process of authenticating clients, such as users or services, which access the Kubernetes cluster by using TLS client certificates.
+
+By default, OpenShift provides an internal certificate authority (CA). The OpenShift internal CA is a built-in component of the OpenShift cluster that manages and issues digital certificates in the cluster. The internal CA provides a trusted source for generating X.509 certificates for secure communication, authentication, and encryption in the OpenShift cluster.
+
+The Kubernetes API server requires client authentication by using client certificates. OpenShift is preconfigured to trust the client certificates that the OpenShift internal CA signs.
+
+### Note
+
+You can also configure additional client CAs for the Kubernetes API server. For more information about configuring additional client CAs for the Kubernetes API server, refer to [https://access.redhat.com/solutions/6054271](https://access.redhat.com/solutions/6054271)
+
+This feature is mainly used to generate a client certificate for an administrator user, such as the predefined `system:admin` user, to use this client certificate as a backdoor for cluster administrators in the event of failure of the IdP that provides the administrator credentials.
+
+Although Red Hat does not recommend doing so, you can also use client certificates in certain scenarios when running outside the cluster, such as CI/CD pipelines, automation playbooks, or monitoring tools. These clients need to present valid client certificates during the TLS handshake to establish a secure connection with the API server. This mechanism ensures that only authorized clients can access the API server from outside the cluster.
+
+### Warning
+
+Red Hat recommends using SAs to run automation outside the cluster whenever you can, instead of using client certificates, because a certificate cannot be revoked in OpenShift. Revoking a client certificate would require invalidating all client certificates that the current CA ever signed, and creating replacement certificates for all client users and applications. For more information about this topic, refer to [https://github.com/kubernetes/kubernetes/issues/18982](https://github.com/kubernetes/kubernetes/issues/18982)
+
+#### Create a Client Certificate
+
+OpenShift assigns the username for the user by using the common name (CN) field from the certificate, and assigns the user's groups by using the organization (O) fields. You can use role-based access control (RBAC) rules to provide the minimal rights to the client account to perform the job. For example, you could provide view permissions for the entire cluster to a monitoring tool, or edit permissions on selected projects to a CI/CD pipeline.
+
+To create client certificates by using the internal OpenShift CA, you must follow these steps:
+
+1. Create a certificate signing request (CSR): The first step is to create a CSR for the client. You can use the OpenSSL tool to create the CSR. This request includes the client's information and the public key. You can use more than one group for the user if you require it.
+    
+    [user@host ~]$ **``openssl req -noenc -newkey rsa:4096 -keyout _`key_filename`_ \   -subj "/O=_`group1`_/O=_`group2`_/CN=_`username`_" -out _`csr_filename`_``**
+    
+2. Create the CSR YAML resource manifest. The following example shows the parameters for a CSR:
+    
+    apiVersion: certificates.k8s.io/v1
+    kind: CertificateSigningRequest
+    metadata:
+      `name`: _`csr_name`_ ![1](https://rol.redhat.com/rol/static/roc/Common_Content/images/1.svg)
+    spec:
+      `signerName`: kubernetes.io/kube-apiserver-client ![2](https://rol.redhat.com/rol/static/roc/Common_Content/images/2.svg)
+      `expirationSeconds`: _`604800`_ # one week ![3](https://rol.redhat.com/rol/static/roc/Common_Content/images/3.svg)
+      `request`: $(base64 -w0 _`csr_filename`_) ![4](https://rol.redhat.com/rol/static/roc/Common_Content/images/4.svg)
+      `usages`: ![5](https://rol.redhat.com/rol/static/roc/Common_Content/images/5.svg)
+      - client auth
+    
+    |   |   |
+    |---|---|
+    |[![1](https://rol.redhat.com/rol/static/roc/Common_Content/images/1.svg)](https://rol.redhat.com/rol/app/#_create_a_client_certificate-CO20-1)|The CSR name.|
+    |[![2](https://rol.redhat.com/rol/static/roc/Common_Content/images/2.svg)](https://rol.redhat.com/rol/app/#_create_a_client_certificate-CO20-2)|The `kube-apiserver-client` built-in signer of certificates that the API server accepts. OpenShift provides different built-in signers that you can use to sign certificates. For more information, refer to [https://kubernetes.io/docs/reference/access-authn-authz/certificate-signing-requests/#kubernetes-signers](https://kubernetes.io/docs/reference/access-authn-authz/certificate-signing-requests/#kubernetes-signers)|
+    |[![3](https://rol.redhat.com/rol/static/roc/Common_Content/images/3.svg)](https://rol.redhat.com/rol/app/#_create_a_client_certificate-CO20-3)|The expiration time for the certificate in seconds. If you do not specify a value, then the default value is 30 days.|
+    |[![4](https://rol.redhat.com/rol/static/roc/Common_Content/images/4.svg)](https://rol.redhat.com/rol/app/#_create_a_client_certificate-CO20-4)|The OpenSSL X.509 CSR, which is encoded in Base64 format.|
+    |[![5](https://rol.redhat.com/rol/static/roc/Common_Content/images/5.svg)](https://rol.redhat.com/rol/app/#_create_a_client_certificate-CO20-5)|The use cases for the client certificate. It must include the `client auth` usage, which indicates that the certificate is intended for client authentication.|
+    
+3. Submit the CSR to the Kubernetes API server. The API server interacts with the internal CA to process the CSR.
+    
+    [user@host ~]$ **`oc apply -f csr.yaml`**
+    
+4. Review, approve, and sign the CSR: You can review the CSR details by using the ``oc describe csr _`csr_name`_`` command. After reviewing the CSR details, use the following command so the internal CA signs the CSR to generate the client certificate:
+    
+    [user@host ~]$ **``oc adm certificate approve _`csr_name`_``**
+    
+5. Retrieve the client certificate: After you approve the CSR and the OpenShift internal CA generates the certificate, you can retrieve the signed certificate from the API server.
+    
+    [user@host ~]$ **``oc get csr _`csr_name`_ -o jsonpath='{.status.certificate}' \   | base64 -d > _`certificate_filename`_``**
+    
+6. Distribute the certificate: The signed certificate, together with the private key that generates the CSR, enables the client to authenticate to the cluster.
+    
+
+### OpenShift CLI Configuration Files
+
+You can use a `kubeconfig` file as a CLI configuration file to set up profiles for use with the Kubernetes `kubectl` and OpenShift `oc` CLI tools. Moreover, most Kubernetes client libraries use `kubeconfig` files in the same way as the `kubectl` and `oc` CLI tools. Use `kubeconfig` files to authenticate external applications to the cluster by storing tokens and client certificates inside the `kubeconfig` files.
+
+The `kubeconfig` file is defined as a YAML file that contains clusters, users, and contexts.
+
+`clusters`
+
+The `clusters` parameter in the `kubeconfig` file contains information about the OpenShift clusters, such as the IP or fully qualified domain name (FQDN), or the CA.
+
+`users`
+
+The `users` parameter contains the user credentials to interact with the Kubernetes API. This parameter contains information such as the username, the user password, or the user token.
+
+`contexts`
+
+The `contexts` parameter contains information about the combination of a cluster and a user to interact with the Kubernetes API. Whenever you run an `oc` command, you reference a context inside the `kubeconfig` file.
+
+#### `kubeconfig` File Details
+
+When you run any `oc` command, OpenShift reads a `kubeconfig` file in the following ways in turn:
+
+1. The specified file in the `--kubeconfig` option, if you use it
+    
+2. The specified file in the `KUBECONFIG` environment variable, if it is set
+    
+3. The default `~/.kube/config` file
+    
+
+When you log in to the OpenShift cluster through the `oc login` command for the first time, OpenShift creates a `kubeconfig` file in the default `~/.kube/config` location, if the file does not exist. You can add more authentication and connection details to the `kubeconfig` file automatically by using the `oc login` and `oc project` commands, or by manually editing the `kubeconfig` file.
+
+You can read the details from your `kubeconfig` file by using the `oc config view` command or by opening the file with a text editor. The following example shows the parameters for a `kubeconfig` file from an OpenShift cluster:
+
+apiVersion: v1
+`clusters`: ![1](https://rol.redhat.com/rol/static/roc/Common_Content/images/1.svg)
+- cluster:
+    server: https://api.ocp4.prod.com:6443
+  name: production
+- cluster:
+    server: https://api.ocp4.stage.com:6443
+    certificate-authority: ocp-apiserver-cert.crt
+  name: stage
+`users`: ![2](https://rol.redhat.com/rol/static/roc/Common_Content/images/2.svg)
+- name: admin-production
+  user:
+    token: REDACTED
+- name: admin-stage
+  user:
+    client-certificate: admin-stage.crt
+    client-key: tls.key
+`contexts`: ![3](https://rol.redhat.com/rol/static/roc/Common_Content/images/3.svg)
+- context:
+    cluster: production
+    namespace: prod-app
+    user: admin-production
+  name: prod-app/api-ocp4-prod-com:6443/admin-production
+- context:
+    cluster: stage
+    namespace: demo-app
+    user: admin-stage
+  name: demo-app/api-ocp4-stage-com:6443/admin-stage
+current-context: demo-app/api-ocp4-stage-com:6443/admin-stage
+kind: Config
+preferences: {}
+
+|   |   |
+|---|---|
+|[![1](https://rol.redhat.com/rol/static/roc/Common_Content/images/1.svg)](https://rol.redhat.com/rol/app/#_kubeconfig_file_details-CO21-1)|The list of all the clusters that you already connected to.|
+|[![2](https://rol.redhat.com/rol/static/roc/Common_Content/images/2.svg)](https://rol.redhat.com/rol/app/#_kubeconfig_file_details-CO21-2)|The list of all the users that you already connected to the cluster.|
+|[![3](https://rol.redhat.com/rol/static/roc/Common_Content/images/3.svg)](https://rol.redhat.com/rol/app/#_kubeconfig_file_details-CO21-3)|The list of contexts that you can reference when using the `oc` command.|
+
+The previous `kubeconfig` example file defines two clusters, `production` and `stage`, with their FQDNs that are defined in the `server` parameter. The `stage` cluster definition also contains the public certificate from the API server in the `certificate-authority` parameter.
+
+The file also defines two users, `admin-production` and `admin-stage`. The `admin-production` user definition uses the token that is defined in the `token` parameter to authenticate to the API server. OpenShift truncates the token information, to prevent the configuration file from becoming too long.
+
+You can use the `--raw` option in the `oc config view` command to show the token information. The `admin-stage` user authenticates to the cluster by using a client certificate that the internal OpenShift CA previously signed, as defined in the `client-certificate` parameter, and the key that signed the client certificate, as defined in the `client-key` parameter.
+
+Every context in the ``kubeconfig file specifies a combination of a user and a cluster that are already defined in the `kubeconfig`` file, through the `cluster` and `user` parameters, and a project through the `namespace` parameter.
+
+#### Configure CLI Profiles
+
+Although you can set most `kubeconfig` file parameters by using the `oc login` and `oc project` OpenShift commands, you can use the `oc config` command to manually configure these parameters if needed, instead of directly modifying the file. You can use the `oc config` command with the ``--kubeconfig=_`file`_`` option to create and store `kubeconfig` files with different parameters that you can use when required. The `oc config` command comes from the Kubernetes `kubectl` CLI tool, with no modifications from OpenShift.
+
+Use the following `oc config` subcommands to manually configure your `kubeconfig` files:
+
+`set-cluster`
+
+Creates a cluster entry in the `kubeconfig` file. This subcommand accepts different cluster parameters as the server IP address or the CA file.
+
+`set-credentials`
+
+Creates a user entry in the `kubeconfig` file. This subcommand accepts different user parameters as the username, the user password, or the token.
+
+`set-context`
+
+Creates a context entry in the `kubeconfig` file. Use this subcommand to define a context to specify a combination of a user and a cluster. You can also set the OpenShift project.
+
+`use-context`
+
+Sets the current context.
+
+### Note
+
+For more information about manually configuring the `kubeconfig` files by using the `oc config` command, consult the references section.
+
+### User Impersonation
+
+User impersonation in OpenShift enables certain users or SAs to act on behalf of other users or SAs with different permissions and roles. This feature is useful when administrators or privileged users need to perform actions on behalf of regular users, or when SAs need to execute tasks on behalf of other SAs, or for regular users to perform actions with administrative permissions. For example, a system administrator can debug an RBAC rule by impersonating another user and verifying whether OpenShift accepts or denies a request. As another example, you want system administrators to escalate privileges when it is necessary instead of them logging in as cluster administrators.
+
+#### System Administrator That Impersonates a Regular User
+
+As a system administrator, use the `--as` and `--as-group` options when using the `oc` command to impersonate a user or group. Use the `oc auth can-i` command to test the user access to a particular resource in the cluster. Use the `-n` option to specify a project for the request, or use the `-A` option to verify the action in all the projects. Thus, use the following command to test the RBAC rules for a particular user or group by impersonating them:
+
+[user@host ~]$ **``oc auth can-i _`command`_ --as _`user_to_impersonate`_ \   --as-group _`group_to_impersonate`_``**
+
+You can also list all the permissions for a specific user or group by using the `oc auth can-i --list` command.
+
+#### Regular User That Impersonates Another User
+
+To grant a regular user permissions to impersonate another user, you must create a custom role with the appropriate permissions, and then create a role binding to assign the role to the user.
+
+For example, to allow a regular user to run commands as an administrator, you can create the following cluster role, which enables anyone to impersonate the administrator user:
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: sudo-admin
+rules:
+- `apiGroups`: [""]  ![1](https://rol.redhat.com/rol/static/roc/Common_Content/images/1.svg)
+  resources: ["users"]
+  verbs: ["impersonate"]
+  resourceNames: ["admin"]
+
+|   |   |
+|---|---|
+|[![1](https://rol.redhat.com/rol/static/roc/Common_Content/images/1.svg)](https://rol.redhat.com/rol/app/#_regular_user_that_impersonates_another_user-CO22-1)|The core API group is identified with an empty string.|
+
+Then, bind the role to the user:
+
+[user@host ~]$ **``oc create clusterrolebinding _`binding_name`_ \   --clusterrole sudo-admin --user _`regularuser`_``**
+
+The user can impersonate the `admin` user by using the `--as=admin` option. The following example shows how the user cannot retrieve the node information when using their account, but can retrieve that information when impersonating the `admin` user:
+
+[user@host ~]$ **`oc get nodes`**
+Error from server (Forbidden): nodes is forbidden:
+User "regularuser" cannot list resource "nodes" in API group "" at the cluster scope
+
+[user@host ~]$ **`oc get nodes --as admin`**
+NAME       STATUS   ROLES                         AGE     VERSION
+master01   Ready    control-plane,master,worker   201d    v1.31.6
+master02   Ready    control-plane,master,worker   201d    v1.31.6
+master03   Ready    control-plane,master,worker   201d    v1.31.6
+worker01   Ready    worker                        2d12h   v1.31.6
+worker02   Ready    worker                        2d12h   v1.31.6
+worker03   Ready    worker                        2d12h   v1.31.6
+
+### References
