@@ -1,3 +1,16 @@
+## KUBEADMIN password
+
+kubeadmin password and config can be retrieved with the following commands:
+
+```sh
+# kubeconfig
+oc get secret -n clusters notwero-admin-kubeconfig  -ojsonpath='{.data.kubeconfig}'| base64 -d > ~/kubeconfig-notwero
+
+#kubeadmin password
+oc get secret -n clusters notwero-kubeadmin-password  -ojsonpath='{.data.password}'| base64 -d
+```
+
+for hosted cluster ()
 ## Affinity
 
 The following example is a `Pod` spec with a rule that requires the pod be placed on a node with a label whose key is `e2e-az-NorthSouth` and whose value is either `e2e-az-North` or `e2e-az-South`:
