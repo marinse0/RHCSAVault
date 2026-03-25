@@ -10,7 +10,16 @@ oc get secret -n clusters notwero-admin-kubeconfig  -ojsonpath='{.data.kubeconfi
 oc get secret -n clusters notwero-kubeadmin-password  -ojsonpath='{.data.password}'| base64 -d
 ```
 
-for hosted cluster ()
+for hosted cluster (if using hosted control planes) kubeconfig can be retrived from hosting cluster with hcp binary
+```sh
+hcp create kubeconfig --name hammer > vaults/hammer-kubeconfig
+```
+
+hosted clusters can be listed with:
+```sh
+oc get hc -n clusters
+```
+
 ## Affinity
 
 The following example is a `Pod` spec with a rule that requires the pod be placed on a node with a label whose key is `e2e-az-NorthSouth` and whose value is either `e2e-az-North` or `e2e-az-South`:
