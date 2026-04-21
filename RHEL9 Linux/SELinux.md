@@ -63,7 +63,7 @@ For example, the following rule specifies that the `/var/www/cgi-bin` director
 
 /var/www/cgi-bin(/.*)?  all files  system_u:object_r:httpd_sys_script_exec_t:s0
 
-### Note
+>Note
 The `all files` field option from the previous example is the default file type that `semanage` uses when you do not specify one. This option applies to all file types that you can use with `semanage`; they are the same as the standard file types as in the _Control Access to Files_ chapter in the _Red Hat System Administration I_ (RH124) course. You can get more information from the `semanage-fcontext`(8) man page.
 
 ## Basic File Context Operations
@@ -195,7 +195,7 @@ _...output omitted..._
 ```
 The `sealert` output describes the event, and includes the affected process, the accessed file, and the attempted and denied action. The output includes advice for correcting the file's label, if appropriate. Additional advice describes how to generate a new policy to allow the denied action. Use the given advice only when it is appropriate for your scenario.
 
-#### Important
+>Important
 The `sealert` output includes a confidence rating, which indicates the level of confidence that the given advice will mitigate the denial. However, that advice might not be appropriate for your scenario.
 
 For example, if the AVC denial is because the denied file is in the wrong location, then advice that states either to adjust the file's context label, or to create a policy for this location and action, although technically accurate, is not the correct solution for your scenario. If the root cause is a wrong location or file name, then moving or renaming the file and then restoring a correct file context is the correct solution instead.
