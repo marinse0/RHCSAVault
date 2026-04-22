@@ -150,22 +150,15 @@ The following list provides the environment characteristics for completing this 
 - All user passwords are set to `redhat`.
 - The `nfs-utils` package is already installed.
 
-1. Log in to `servera` and install the required packages.
-    
-    1. Log in to `servera` as the `student` user and switch to the `root` user.
-```        
-        [student@workstation ~]$ **`ssh student@servera`**
-        _...output omitted..._
-        [student@servera ~]$ **`sudo -i`**
-        [sudo] password for student: `student`
-        [root@servera ~]#
-```        
-    1. Install the `autofs` package.
-```
+1. Log in to `servera` and install the required packages.   
+
+- Install the `autofs` package.
+
+```sh
         
-        [root@servera ~]# **`dnf install autofs`**
+        [root@servera ~]# dnf install autofs
         _...output omitted..._
-        Is this ok [y/N]: **`y`**
+        Is this ok [y/N]: y
         _...output omitted..._
         Complete!
 ```        
@@ -173,23 +166,29 @@ The following list provides the environment characteristics for completing this 
     
     1. Test the NFS server and export before you configure the automounter.
 
-```    
-        [root@servera ~]# **`mount -t nfs \`**
-        **`serverb.lab.example.com:/shares/direct/external /mnt`**
-        [root@servera ~]# **`ls -l /mnt`**
+```sh    
+        [root@servera ~]# mount -t nfs \
+        serverb.lab.example.com:/shares/direct/external /mnt
+        [root@servera ~]# ls -l /mnt
         total 4
         -rw-r--r--. 1 root contractors 22 Apr  7 23:15 README.txt
-        [root@servera ~]# **`umount /mnt`**
-```        
-    2. Create a master map file named `/etc/auto.master.d/direct.autofs`, insert the following content, and save the changes.
-```        
+        [root@servera ~]# umount /mnt
+```
+
+
+   - Create a master map file named `/etc/auto.master.d/direct.autofs`, insert the following content, and save the changes.
+
+```sh
         /-	/etc/auto.direct
 ```       
-    3. Create a direct map file named `/etc/auto.direct`, insert the following content, and save the changes.
+
+   - Create a direct map file named `/etc/auto.direct`, insert the following content, and save the changes.
+
 ```        
         /external	-rw,sync,fstype=nfs4	serverb.lab.example.com:/shares/direct/external
 ```        
-3. Configure an automounter indirect map on `servera` with exports from `serverb`. Create the indirect map with files that are named `/etc/auto.master.d/indirect.autofs` for the master map and `/etc/auto.indirect` for the mapping file. Use the `/internal` directory as the main mount point on `servera`.
+
+- Configure an automounter indirect map on `servera` with exports from `serverb`. Create the indirect map with files that are named `/etc/auto.master.d/indirect.autofs` for the master map and `/etc/auto.indirect` for the mapping file. Use the `/internal` directory as the main mount point on `servera`.
     
     1. Test the NFS server and export before you configure the automounter.
 

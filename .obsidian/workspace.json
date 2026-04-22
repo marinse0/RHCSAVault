@@ -55,12 +55,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "RHEL9 Linux/SELinux.md",
+                "file": "RHEL9 Linux/Automount Network-Attached Storage.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "SELinux"
+              "title": "Automount Network-Attached Storage"
             }
           }
         ],
@@ -96,7 +96,7 @@
             "state": {
               "type": "search",
               "state": {
-                "query": "selinu",
+                "query": "nfs",
                 "matchingCase": false,
                 "explainSearch": false,
                 "collapseAll": false,
@@ -184,13 +184,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "RHEL9 Linux/SELinux.md",
+                "file": "RHEL9 Linux/Automount Network-Attached Storage.md",
                 "followCursor": true,
                 "showSearch": true,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of SELinux"
+              "title": "Outline of Automount Network-Attached Storage"
             }
           },
           {
@@ -224,15 +224,15 @@
   },
   "active": "53d52d6fb2d8ef17",
   "lastOpenFiles": [
+    "RedHat OpenShift Administration/I - Operating a Production Cluster.md",
+    "RHEL9 Linux/SELinux.md",
     "RedHat OpenShift Administration/RMA - Knowledge.md",
     "RedHat OpenShift Administration/III - Scaling Deployments in the Enterprise.md",
-    "RedHat OpenShift Administration/I - Operating a Production Cluster.md",
     "RedHat OpenShift Administration/II - Configuring a Production Cluster.md",
     "Untitled.base",
     "Study points for the exam.md",
     "Untitled.md",
     "RHEL9 Linux/Linux Process States.md",
-    "RHEL9 Linux/SELinux.md",
     "RedHat OpenShift Administration/Red Hat OpenShift Data Foundation.md",
     "RedHat OpenShift Administration/ODF office hours.md",
     "RHEL9 Linux/Containers, Podman.md",
